@@ -2,7 +2,7 @@ const path = require('path')
 const multer = require('multer')
 const fs = require('fs')
 
-const avatarsUpload = multer({ storage: {
+const avatarsUpload = multer({ storage: multer.diskStorage({
   destination: function (req, file, cb) {
     const dir = path.join(__dirname, '..', 'uploads', 'avatars')
 
@@ -16,6 +16,6 @@ const avatarsUpload = multer({ storage: {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
     cb(null, uniqueSuffix + '-' + file.originalname)
   }
-}})
+})})
 
 module.exports = { avatarsUpload }

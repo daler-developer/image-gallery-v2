@@ -5,7 +5,7 @@ module.exports = (req, res, next) => {
   const errors = validationResult(req)
   
   if (!errors.isEmpty()) {
-    return res.status(500).json({ type: errorTypes.COMMON_VALIDATION_ERROR  })
+    return res.status(500).json({ errorType: errorTypes.COMMON_VALIDATION_ERROR  })
   }
 
   return next()

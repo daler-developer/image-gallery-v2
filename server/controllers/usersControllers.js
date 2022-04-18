@@ -44,6 +44,7 @@ const register = async (req, res) => {
 
     return res.status(202).json({ user, token })
   } catch (e) {
+    console.log(e)
     return res.status(500).json({ type: errorTypes.COMMON_SERVER_ERROR })
   }
 }
@@ -55,33 +56,26 @@ const login = async (req, res) => {
     const user = await collections.users.findOne({ username })
 
     if (!user) {
-      return res.status(404).json({ type: errorTypes.USERS_USER_DOES_NOT_EXIST })
+      return res.status(404).json({ errorType: errorTypes.USERS_USER_DOES_NOT_EXIST })
     }
 
     if (user.password !== password) {
-      return res.status(404).json({ type: errorTypes.USERS_USER_DOES_NOT_EXIST })
+      return res.status(404).json({ errorType: errorTypes.AUTH_INVALID_PASSWORD })
     }
 
     const token = generateAuthToken(user._id.toString())
 
     return res.status(200).json({ user, token })
   } catch (e) {
-    return res.status(500).json({ type: errorTypes.COMMON_SERVER_ERROR })
+    return res.status(500).json({ errorType: errorTypes.COMMON_SERVER_ERROR })
   }
 }
 
-const verifyToken = async (req, res) => {
+const getCurrent = async (req, res) => {
   try {
-    const { token } = req.body
-    let decoded
+    const { _id } = req.user
 
-    try {
-      decoded = decodeAuthToken(token)
-    } catch (e) {
-      return res.status(400).json({ errorType: errorTypes.AUTH_INVALID_TOKEN })      
-    }
-
-    const user = await collections.users.findOne({ _id: new ObjectId(decoded.userId) })
+    const user = await collections.users.findOne({ _id })
 
     return res.status(200).json({ user })
   } catch (e) {
@@ -137,5 +131,5 @@ module.exports = {
   login,
   updateProfile,
   getAll,
-  verifyToken
+  getCurrent
 }

@@ -28,7 +28,7 @@ router.post(
   validator.body('username')
     .isLength({ min: 3, max: 15 })
     .toLowerCase(),
-  validator.body('passsword')
+  validator.body('password')
     .isLength({ min: 3, max: 15 })
     .toLowerCase(),
   validateRequestMiddleware,
@@ -40,19 +40,18 @@ router.post(
   validator.body('username')
     .isLength({ min: 3, max: 15 })
     .toLowerCase(),
-  validator.body('passsword')
+  validator.body('password')
     .isLength({ min: 3, max: 15 })
     .toLowerCase(),
   validateRequestMiddleware,
   usersController.login
 )
 
-router.post(
-  '/users/verify-token',
-  validator.body('token')
-    .isJWT(),
+router.get(
+  '/users/current',
+  populateUserMiddleware,
   validateRequestMiddleware,
-  usersController.verifyToken
+  usersController.getCurrent
 )
 
 router.patch(
@@ -63,7 +62,7 @@ router.patch(
     .optional()
     .isLength({ min: 3, max: 15 })
     .toLowerCase(),
-  validator.body('passsword')
+  validator.body('password')
     .optional()
     .isLength({ min: 3, max: 15 })
     .toLowerCase(),

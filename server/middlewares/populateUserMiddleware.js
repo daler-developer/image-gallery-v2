@@ -10,13 +10,13 @@ module.exports = async (req, res, next) => {
     let decoded
 
     if (!token) {
-      return res.status(402).json({ type: errorTypes.AUTH_NOT_AUTHENTICATED })
+      return res.status(402).json({ errorType: errorTypes.AUTH_NOT_AUTHENTICATED })
     }
 
     try {
       decoded = decodeAuthToken(token)
     } catch (e) {
-      return res.status(502).json({ type: errorTypes.AUTH_INVALID_TOKEN })
+      return res.status(502).json({ errorType: errorTypes.AUTH_INVALID_TOKEN })
     }
 
     const user = await collections.users.findOne({ _id: new ObjectId(decoded.userId) })
@@ -26,6 +26,6 @@ module.exports = async (req, res, next) => {
     return next()
 
   } catch (e) {
-    return res.status(502).json({ type: errorTypes.COMMON_SERVER_ERROR })
+    return res.status(502).json({ errorType: errorTypes.COMMON_SERVER_ERROR })
   }
 }
