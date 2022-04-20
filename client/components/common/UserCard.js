@@ -1,10 +1,28 @@
 import pt from 'prop-types'
 import styled from 'styled-components'
-import emptyAvatar from '../../public/empty-avatar.png'
+import Link from 'next/link'
 import Avatar from './Avatar'
 import Button from './Button'
+import useFollow from '../../hooks/useFollow'
+import useUnfollow from '../../hooks/useUnfollow'
 
 const UserCard = ({ user }) => {
+
+  const follow = useFollow()
+  const unfollow = useUnfollow()
+
+  const handlers = {
+    viewProfileBtnClick() {
+
+    },
+    followBtnClick() {
+      follow.mutate({ _id: user._id })
+    },
+    unfollowBtnClick() {
+      unfollow.mutate({ _id: user._id })
+    }
+  }
+
   return (
     <StyledWrapper>
 
@@ -17,9 +35,23 @@ const UserCard = ({ user }) => {
         {user.username}
       </StyledUsername>
 
-      <StyledViewProfileBtn type='button' size='md'>
-        View profile
-      </StyledViewProfileBtn>
+      {
+        user.currentUserFollows ? (
+          <Button onClick={handlers.unfollowBtnClick} isLoading={unfollow.isLoading}>
+            Unfollow
+          </Button>
+        ) : (
+          <Button onClick={handlers.followBtnClick} isLoading={follow.isLoading}>
+            Follow
+          </Button>
+        )
+      }
+
+      <Link href={`/profile/${user._id}`} passHref>
+        <StyledViewProfileLink type='button' size='md'>
+          View profile
+        </StyledViewProfileLink>
+      </Link>
 
     </StyledWrapper>
   )
@@ -30,7 +62,7 @@ UserCard.propTypes = {
     _id: pt.string.isRequired,
     username: pt.string.isRequired,
     avatarUrl: pt.string
-  })
+  }).isRequired
 }
 
 const StyledWrapper = styled.div`
@@ -52,8 +84,16 @@ const StyledUsername = styled.span`
   font-size: 18px;
 `
 
-const StyledViewProfileBtn = styled(Button)`
+const StyledViewProfileLink = styled.a`
   margin-top: 40px;
+`
+
+const StyledFollowBtn = styled.button`
+  
+`
+
+const StyledUnfollowBtn = styled.button`
+  
 `
 
 export default UserCard

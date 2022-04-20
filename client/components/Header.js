@@ -3,9 +3,6 @@ import useCurrentUser from '../hooks/useCurrentUser'
 import Container from './common/Container'
 import Avatar from './common/Avatar'
 import logo from '../public/logo.jpg'
-import emptyAvatar from '../public/empty-avatar.png'
-
-console.log(logo)
 
 const Header = ({}) => {
 

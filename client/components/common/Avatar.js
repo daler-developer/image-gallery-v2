@@ -23,6 +23,10 @@ const StyledWrapper = styled.img`
   ${({ $size }) => $size === 'md' && `
     width: 40px;
   `}
+
+  ${({ $size }) => $size === 'lg' && `
+    width: 70px;
+  `}
 `
 
 export default Avatar

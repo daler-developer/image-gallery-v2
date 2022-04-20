@@ -1,5 +1,14 @@
 const express = require('express')
-const usersController = require('../controllers/usersControllers')
+
+const getUsersController= require('../controllers/users/getUsersController')
+const getUserController = require('../controllers/users/getUserController')
+const registerController = require('../controllers/users/registerController')
+const loginController = require('../controllers/users/loginController')
+const updateProfileController = require('../controllers/users/updateProfileController')
+const getCurrentUserController = require('../controllers/users/getCurrentUserController')
+const followUserController = require('../controllers/users/followUserController')
+const unfollowUserController = require('../controllers/users/unfollowUserController')
+
 const populateUserMiddleware = require('../middlewares/populateUserMiddleware')
 const validator = require('express-validator')
 const { avatarsUpload } = require('../utils/uploads')
@@ -15,12 +24,9 @@ router.get(
   validator.query('offset')
     .optional()
     .toInt(),
-  validator.query('excludeCurrentUser')
-    .custom((value) => (value && value !== 'yes' && value !== 'no') ? Promise.reject() : Promise.resolve)
-    .customSanitizer((value) => value === 'yes' ? true : false),
   validateRequestMiddleware,
   populateUserMiddleware, 
-  usersController.getAll
+  getUsersController
 )
 
 router.post(
@@ -32,7 +38,7 @@ router.post(
     .isLength({ min: 3, max: 15 })
     .toLowerCase(),
   validateRequestMiddleware,
-  usersController.register
+  registerController
 )
 
 router.post(
@@ -44,14 +50,14 @@ router.post(
     .isLength({ min: 3, max: 15 })
     .toLowerCase(),
   validateRequestMiddleware,
-  usersController.login
+  loginController
 )
 
 router.get(
   '/users/current',
   populateUserMiddleware,
   validateRequestMiddleware,
-  usersController.getCurrent
+  getCurrentUserController
 )
 
 router.patch(
@@ -67,7 +73,27 @@ router.patch(
     .isLength({ min: 3, max: 15 })
     .toLowerCase(),
   validateRequestMiddleware,
-  usersController.updateProfile
+  updateProfileController
+)
+
+router.patch(
+  '/users/:_id/follow',
+  populateUserMiddleware,
+  validateRequestMiddleware,
+  followUserController
+)
+
+router.patch(
+  '/users/:_id/unfollow',
+  populateUserMiddleware,
+  validateRequestMiddleware,
+  unfollowUserController
+)
+
+router.get(
+  '/users/:_id',
+  populateUserMiddleware,
+  getUserController
 )
 
 module.exports = router

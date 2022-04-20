@@ -1,6 +1,5 @@
 import styled from 'styled-components'
 import Layout from '../../components/common/Layout'
-import UserCards from '../../components/UserCards'
 import Container from '../../components/common/Container'
 
 const Home = () => {

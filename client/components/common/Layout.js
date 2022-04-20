@@ -1,6 +1,7 @@
 import pt from 'prop-types'
 import styled from 'styled-components'
 import Header from '../Header'
+import Nav from '../Nav'
 import AuthProtected from './AuthProtected'
 import Container from './Container'
 
@@ -11,8 +12,12 @@ const Layout = ({ children }) => {
 
         <Header />
 
+        <Nav />
+
         <Container>
-          {children}
+          <StyledBody>
+            {children}
+          </StyledBody>
         </Container>
         
       </StyledWrapper>
@@ -25,7 +30,11 @@ Layout.propTypes = {
 }
 
 const StyledWrapper = styled.div`
-  padding-top: 60px;
+  padding-top: 100px;
+`
+
+const StyledBody = styled.div`
+  margin-top: 50px;
 `
 
 export default Layout

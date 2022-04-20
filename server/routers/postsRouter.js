@@ -1,6 +1,5 @@
 const express = require('express')
 const validator = require('express-validator')
-const postsControllers = require('../controllers/postsControllers')
 const validateRequestMiddleware = require('../middlewares/validateRequestMiddleware')
 const populateUserMiddleware = require('../middlewares/populateUserMiddleware')
 
@@ -18,7 +17,7 @@ router.get(
   validator.query('userId')
     .optional(),
   validateRequestMiddleware,
-  postsControllers.getPosts
+  () => {}
 )
 
 module.exports = router
