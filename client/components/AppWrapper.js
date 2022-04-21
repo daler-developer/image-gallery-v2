@@ -1,28 +1,26 @@
 import pt from 'prop-types'
 import { useEffect } from 'react'
-import useLogin from '../hooks/useLogin'
-import useCurrentUser from '../hooks/useCurrentUser'
+import { useDispatch, useSelector } from 'react-redux'
+import { authActions, selectIsLoadingCurrentUser } from '../redux/reducers/authReducer'
 import FullScreenLoader from './common/FullScreenLoader'
-import UpdateProfileModal from './UpdateProfileModal'
 
 const AppWrapper = ({ children }) => {
-  const currentUser = useCurrentUser()
+  const isLoadingCurrentUser = useSelector((state) => selectIsLoadingCurrentUser(state))
+
+  const dispatch = useDispatch()
 
   useEffect(() => {
-    const token = localStorage.getItem('auth-token')
-    
-    if (token) {
-      currentUser.refetch()
+    if (localStorage.getItem('auth-token')) {
+      dispatch(authActions.fetchCurrentUser())
     }
   }, [])
 
-  if (currentUser.isFetching) {
+  if (isLoadingCurrentUser) {
     return <FullScreenLoader />
   }
 
   return <>
     {children}
-    <UpdateProfileModal />
   </>
 }
 

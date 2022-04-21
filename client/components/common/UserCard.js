@@ -3,23 +3,20 @@ import styled from 'styled-components'
 import Link from 'next/link'
 import Avatar from './Avatar'
 import Button from './Button'
-import useFollow from '../../hooks/useFollow'
-import useUnfollow from '../../hooks/useUnfollow'
 
 const UserCard = ({ user }) => {
-
-  const follow = useFollow()
-  const unfollow = useUnfollow()
+  
+  const dispatch = useDispatch()
 
   const handlers = {
     viewProfileBtnClick() {
 
     },
     followBtnClick() {
-      follow.mutate({ _id: user._id })
+
     },
     unfollowBtnClick() {
-      unfollow.mutate({ _id: user._id })
+
     }
   }
 
@@ -37,11 +34,11 @@ const UserCard = ({ user }) => {
 
       {
         user.currentUserFollows ? (
-          <Button onClick={handlers.unfollowBtnClick} isLoading={unfollow.isLoading}>
+          <Button onClick={handlers.unfollowBtnClick} isLoading={false}>
             Unfollow
           </Button>
         ) : (
-          <Button onClick={handlers.followBtnClick} isLoading={follow.isLoading}>
+          <Button onClick={handlers.followBtnClick} isLoading={false}>
             Follow
           </Button>
         )

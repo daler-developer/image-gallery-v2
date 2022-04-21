@@ -1,20 +1,20 @@
 import pt from 'prop-types'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
-import useCurrentUser from '../../hooks/useCurrentUser'
+import useIsAuthenticated from '../../hooks/useIsAuthenticated'
 
 const AuthProtected = ({ children }) => {
-  const currentUser = useCurrentUser()
+  const isAuthenticated = useIsAuthenticated()
 
   const router = useRouter()
 
   useEffect(() => {
-    if (!currentUser.isAuthenticated) {
+    if (!isAuthenticated) {
       router.push('/auth?tab=login')
     }
-  }, [currentUser.isAuthenticated])
+  }, [isAuthenticated])
 
-  if (!currentUser.isAuthenticated) {
+  if (!isAuthenticated) {
     return null
   }
 

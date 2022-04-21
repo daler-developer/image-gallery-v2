@@ -1,52 +1,56 @@
 import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
-import Button from '../../components/common/Button'
 import Layout from '../../components/common/Layout'
 import Spinner from '../../components/common/Spinner'
+import ErrorMessage from '../../components/common/ErrorMessage'
 import UserCard from '../../components/common/UserCard'
-import useUsers from '../../hooks/useUsers'
+import { selectUsers, selectUsersErrorType, selectUsersFetchingStatus, usersActions } from '../../redux/reducers/usersReducer'
+import Button from '../../components/common/Button'
 
 const Users = ({}) => {
-  const users = useUsers()
+  const users = useSelector((state) => selectUsers(state))
+  const status = useSelector((state) => selectUsersFetchingStatus(state))
+  const errorType = useSelector((state) => selectUsersErrorType(state))
+
+  const dispatch = useDispatch()
 
   useEffect(() => {
-    users.refetch()
+    if (status === 'idle') {
+      dispatch(usersActions.fetch())
+    }
   }, [])
 
   const handlers = {
     loadMoreBtnClick() {
-      users.loadMore()
+      dispatch(usersActions.fetch({ offset: users.length }))
     }
   }
 
   return (
     <StyledWrapper>
-      
-      {
-        users.isSuccess && (
-          <StyledUserCards>
-            {
-              users.list.map((user) => (
-                <UserCard
-                  key={user._id}
-                  user={user}
-                />
-              ))
-            }
-          </StyledUserCards>
-        )
-      }
+
+      <StyledUserCards>
+        {
+          users.map((user) => (
+            <UserCard
+              key={user._id}
+              user={user}
+            />
+          ))
+        }
+      </StyledUserCards>
 
       {
-        users.isLoading ? (
+        status === 'fetching' ? (
           <Spinner />
-        ) : users.isError ? (
-          <h4>Error</h4>
-        ) : <>
+        ) : status === 'error' ? (
+          <ErrorMessage type={errorType} />
+        ) : status === 'success' && (
           <Button onClick={handlers.loadMoreBtnClick}>
-            More
+            Load more
           </Button>
-        </>
+        )
       }
 
     </StyledWrapper>

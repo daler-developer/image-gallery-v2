@@ -1,28 +1,24 @@
 import styled from 'styled-components'
-import { useRouter } from 'next/router'
 import Layout from '../../components/common/Layout'
-import useUser from '../../hooks/userUser'
 import { useEffect } from 'react'
 import Avatar from '../../components/common/Avatar'
 
 const Profile = () => {
-  const router = useRouter()
 
-  const user = useUser({ _id: router.query._id })
 
   useEffect(() => {
-    user.refetch()
+
   }, [])
 
   return (
     <StyledWrapper>
       
       {
-        user.isSuccess && (
+        true && (
           <StyledBasicInfo>
-            <StyledAvatar src={user.data.avatarUrl} />
-            <StyledUsername>@{user.data.username}</StyledUsername>
-            <StyledNumFollowings>{user.data.numFollowings}</StyledNumFollowings>
+            <StyledAvatar />
+            <StyledUsername>@{}</StyledUsername>
+            <StyledNumFollowings>{}</StyledNumFollowings>
             <StyledNumFollowers>{20}</StyledNumFollowers>
             <StyledNumPosts>{30}</StyledNumPosts>
           </StyledBasicInfo>

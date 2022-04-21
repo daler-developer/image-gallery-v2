@@ -22,7 +22,7 @@ const Header = ({}) => {
           />
 
           <StyledAvatar
-            src={currentUser.user.avatarUrl}
+            src={currentUser.avatarUrl}
             onClick={() => currentUser.logout()}
           />
 

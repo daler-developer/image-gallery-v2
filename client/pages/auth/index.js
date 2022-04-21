@@ -2,29 +2,29 @@ import { useFormik } from 'formik'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
+import { useEffect, useState } from 'react'
 import * as yup from 'yup'
-import { useEffect } from 'react'
 import Button from '../../components/common/Button'
-import useLogin from '../../hooks/useLogin'
-import useRegister from '../../hooks/useRegister'
-import useCurrentUser from '../../hooks/useCurrentUser'
-import generateErrorMessage from '../../utils/generateErrorMessage'
 import Input from '../../components/common/Input'
-import FullScreenLoader from '../../components/common/FullScreenLoader'
+import { useDispatch, useSelector } from 'react-redux'
+import { authActions } from '../../redux/reducers/authReducer'
+import ErrorMessage from '../../components/common/ErrorMessage'
+import useIsAuthenticated from '../../hooks/useIsAuthenticated'
 
 const Auth = () => {
+  const [errorType, setErrorType] = useState(null)
+
+  const isAuthenticated = useIsAuthenticated()
+
   const router = useRouter()
 
-  const currentUser = useCurrentUser()
+  const dispatch = useDispatch()
 
   useEffect(() => {
-    if (currentUser.isAuthenticated) {
+    if (isAuthenticated) {
       router.push('/home')
     }
-  }, [currentUser.isAuthenticated])
-
-  const login = useLogin()
-  const register = useRegister()
+  }, [isAuthenticated])
 
   const tab = router.query.tab
 
@@ -40,12 +40,12 @@ const Auth = () => {
     async onSubmit({ username, password }) {
       try {
         if (tab === 'login') {
-          await login.mutateAsync({ username, password })
+          await dispatch(authActions.login({ username, password })).unwrap()
         } else if (tab === 'register') {
-          await register.mutateAsync({ username, password })
+          await dispatch(authActions.register({ username, password })).unwrap()
         }
       } catch (e) {
-        alert('error')
+        setErrorType(e.errorType)
       } finally {
         form.resetForm()
       }
@@ -73,10 +73,8 @@ const Auth = () => {
         />
 
         {
-          login.error && (
-            <StyledErrorMessage>
-              {generateErrorMessage(login.errorType)}
-            </StyledErrorMessage>
+          errorType && (
+            <ErrorMessage type={errorType} />
           )
         }
 

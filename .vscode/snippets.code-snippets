@@ -1,4 +1,10 @@
 {
+	"export default": {
+		"prefix": "ed",
+		"body": [
+			"export default $0"
+		]
+	},
 	"import default": {
 		"prefix": "impd",
 		"body": [
@@ -65,6 +71,26 @@
 		"prefix": "useRef",
 		"body": [
 			"const $1Ref = useRef(null)$0"
+		]
+	},
+	"useDispatch": {
+		"prefix": "used",
+		"body": [
+			"const dispatch = useDispatch()$0"
+		]
+	},
+	"useSelector": {
+		"prefix": "uses",
+		"body": [
+			"const $1 = useSelector((state) => $0)"
+		]
+	},
+	"selector": {
+		"prefix": "selector",
+		"body": [
+			"export const select$1 = (state) => {",
+			"  return state.$0",
+			"}"
 		]
 	},
 	"Component": {

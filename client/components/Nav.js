@@ -23,7 +23,7 @@ const Nav = () => {
             </StyledTab>
           </Link>
 
-          <Link href={`/profile/${currentUser.user._id}`} passHref>
+          <Link href={`/profile/${currentUser._id}`} passHref>
             <StyledTab>
               Profile
             </StyledTab>
