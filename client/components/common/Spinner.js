@@ -1,7 +1,7 @@
 import pt from 'prop-types'
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 
-const Spinner = ({ size, color, ...rest }) => {
+const Spinner = ({ size, color = 'blue', ...rest }) => {
   return (
     <StyledWrapper
       $size={size}
@@ -11,31 +11,44 @@ const Spinner = ({ size, color, ...rest }) => {
   )
 }
 
-Spinner.defaultProps = {
-  size: 'md',
-  color: 'black'
-}
-
 Spinner.propTypes = {
   size: pt.oneOf(['sm', 'md', 'lg']),
-  color: pt.oneOf(['black'])
+  color: pt.oneOf(['black', 'white'])
 }
+
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`
 
 const StyledWrapper = styled.div`
   border: 3px solid black;
-  border-bottom-color: transparent;
   border-radius: 50px;
   aspect-ratio: 1 / 1;
+  animation: ${rotate} 1s linear infinite;
 
   ${({ $size }) => $size === 'sm' && `
     width: 20px;
   `}
   ${({ $size }) => $size === 'md' && `
-    width: 40px;
+    width: 30px;
   `}
   ${({ $size }) => $size === 'lg' && `
-    width: 60px;
+    width: 40px;
   `}
+
+  ${({ $color }) => $color === 'black' && `
+    border-color: black;
+  `}
+  ${({ $color }) => $color === 'white' && `
+    border-color: white;
+  `}
+
+  border-bottom-color: transparent;
 `
 
 export default Spinner

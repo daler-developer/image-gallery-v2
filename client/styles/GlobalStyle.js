@@ -22,6 +22,8 @@ const GlobalStyle = createGlobalStyle`
 
   input {
     outline: none;
+    border: none;
+    background-color: inherit;
   }
 
   ul {
@@ -30,6 +32,7 @@ const GlobalStyle = createGlobalStyle`
 
   button {
     cursor: pointer;
+    border: none;
   }
 
   img {

@@ -1,14 +1,28 @@
 import pt from 'prop-types'
+import { useRef } from 'react'
 import styled from 'styled-components'
+import { useDispatch } from 'react-redux'
+import useOnClickOutside from '../../hooks/useOnClickOutside'
+import { uiActions } from '../../redux/reducers//uiReducer'
 
-const Modal = ({ children, title, isHiden }) => {
-  if (isHiden) {
+const Modal = ({ children, title, isHidden }) => {
+  const rootRef = useRef(null)
+
+  const dispatch = useDispatch()
+
+  useOnClickOutside(rootRef, () => {
+    if (!isHidden) {
+      dispatch(uiActions.activeModalChanged(null))
+    }
+  })
+
+  if (isHidden) {
     return null
   }
 
-  return (
+  return <>
     <StyledWrapper>
-      <StyledModal>
+      <StyledModal ref={rootRef}>
 
         <StyledHeader>
           {title}
@@ -20,11 +34,11 @@ const Modal = ({ children, title, isHiden }) => {
 
       </StyledModal>
     </StyledWrapper>
-  )
+  </>
 }
 
 Modal.propTypes = {
-  isHiden: pt.bool.isRequired,
+  isHidden: pt.bool.isRequired,
   title: pt.string.isRequired,
   children: pt.any.isRequired
 }

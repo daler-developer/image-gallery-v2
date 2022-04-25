@@ -10,12 +10,6 @@ const getCurrentUserController = async (req, res) => {
         $match: { _id: currentUser._id }
       },
       {
-        $set: {
-          numFollowings: { $size: '$followings' },
-          currentUserFollows: { $in: ['$_id', currentUser.followings] }
-        }
-      },
-      {
         $unset: ['followings']
       }
     ]).toArray()

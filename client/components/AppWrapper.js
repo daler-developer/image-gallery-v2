@@ -3,6 +3,9 @@ import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { authActions, selectIsLoadingCurrentUser } from '../redux/reducers/authReducer'
 import FullScreenLoader from './common/FullScreenLoader'
+import AuthProtected from './common/AuthProtected'
+import UpdateProfileModal from './UpdateProfileModal'
+import CreatePostModal from './CreatePostModal'
 
 const AppWrapper = ({ children }) => {
   const isLoadingCurrentUser = useSelector((state) => selectIsLoadingCurrentUser(state))
@@ -21,6 +24,9 @@ const AppWrapper = ({ children }) => {
 
   return <>
     {children}
+    <AuthProtected>
+      <UpdateProfileModal />
+    </AuthProtected>
   </>
 }
 

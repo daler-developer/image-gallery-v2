@@ -37,21 +37,22 @@ const StyledWrapper = styled.div`
   display: inline-flex;
   flex-direction: column;
   row-gap: 3px;
+  border: 1px solid black;
 `
 
 const StyledInput = styled.input`
   text-indent: 4px;
-
-  ${({ size }) => size === 'ms' && `
-    padding: 2px 0;  
-  `}
-  ${({ size }) => size === 'md' && `
-    padding: 4px 0;  
-  `}
-  ${({ size }) => size === 'lg' && `
-    padding: 7px 0;  
-  `}
+  height: 35px; 
 `
+  // ${({ size }) => size === 'ms' && `
+  //   height: 40px; 
+  // `}
+  // ${({ size }) => size === 'md' && `
+  //   height: 40px; 
+  // `}
+  // ${({ size }) => size === 'lg' && `
+  //   padding: 7px 0;  
+  // `}
 
 const StyledErrorMessage = styled.div`
   color: red;

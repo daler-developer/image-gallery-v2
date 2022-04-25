@@ -35,6 +35,31 @@ const fetchCurrentUser = createAsyncThunk('auth/get-current-user', async (_, thu
   }
 })
 
+const profileUpdated = createAsyncThunk('auth/profile-updated', async (fields, thunkAPI) => {
+  try {
+    const form = new FormData()
+
+    console.log(fields)
+
+    if (fields.username) {
+      form.append('username', fields.username)
+    }
+
+    if (fields.removeAvatar) {
+      form.append('removeAvatar', 'yes')
+    } else if (fields.avatar) {
+      form.append('avatar', fields.avatar)
+    }
+    
+    const currentUser = selectCurrentUser(thunkAPI.getState())
+    const { data } = await api.updateProfile({ _id: currentUser._id, form })
+
+    return data
+  } catch (e) {
+    return thunkAPI.rejectWithValue({ errorType: e.response.data.errorType })
+  }
+})
+
 const initialState = {
   currentUser: null,
   isLoadingCurrentUser: false
@@ -67,6 +92,10 @@ const authSlice = createSlice({
         state.isLoadingCurrentUser = false
         state.currentUser = payload.user
       })
+
+      .addCase(profileUpdated.fulfilled, (state, { payload }) => {
+        state.currentUser = payload.user
+      })
   }
 })
 
@@ -82,7 +111,8 @@ export const authActions = {
   ...authSlice.actions,
   login,
   register,
-  fetchCurrentUser
+  fetchCurrentUser,
+  profileUpdated
 }
 
 const authReducer = authSlice.reducer

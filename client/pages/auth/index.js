@@ -80,11 +80,11 @@ const Auth = () => {
 
         {
           tab === 'login' ? (
-            <StyledSubmitBtn type='submit' isLoading={form.isSubmitting}>
+            <StyledSubmitBtn type='submit' size='md' isLoading={form.isSubmitting}>
               Login
             </StyledSubmitBtn>
           ) : (
-            <StyledSubmitBtn type='submit' isLoading={form.isSubmitting}>
+            <StyledSubmitBtn type='submit' size='md' isLoading={form.isSubmitting}>
               Register
             </StyledSubmitBtn>
           )

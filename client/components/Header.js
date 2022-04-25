@@ -33,13 +33,13 @@ const Header = ({}) => {
 }
 
 const StyledWrapper = styled.div`
-  border: 1px solid black;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   background-color: white;
   z-index: 1000;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 `
 
 const StyledBody = styled.div`

@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import * as api from '../../utils/api'
 
-const fetch = createAsyncThunk('users/fetch', async ({ offset } = {}, thunkAPI) => {
+const fetched = createAsyncThunk('users/fetch', async ({ offset } = {}, thunkAPI) => {
   try {
     const { data } = await api.getUsers({ offset })
 
@@ -11,11 +11,21 @@ const fetch = createAsyncThunk('users/fetch', async ({ offset } = {}, thunkAPI) 
   }
 })
 
-const follow = createAsyncThunk('users/follow', async ({ userId }, thunkAPI) => {
+const followedUser = createAsyncThunk('users/followed-user', async ({ userId }, thunkAPI) => {
   try {
-    const { data } = await api.followUser({ _id: userId })
+    await api.followUser({ _id: userId })
 
-    return data
+    return { userId }
+  } catch (e) {
+    return thunkAPI.rejectWithValue({ errorType: e.response.data.errorType })
+  }
+})
+
+const unfollowedUser = createAsyncThunk('users/unfollowed-user', async ({ userId }, thunkAPI) => {
+  try {
+    await api.unfollowUser({ _id: userId })
+
+    return { userId }
   } catch (e) {
     return thunkAPI.rejectWithValue({ errorType: e.response.data.errorType })
   }
@@ -35,26 +45,41 @@ const usersSlice = createSlice({
   },
   extraReducers(builder) {
     builder
-      .addCase(fetch.pending, (state, { paylaod }) => {
+      .addCase(fetched.pending, (state, { paylaod }) => {
         state.status = 'fetching'
         state.errorType = null
       })
-      .addCase(fetch.fulfilled, (state, { payload }) => {
+      .addCase(fetched.fulfilled, (state, { payload }) => {
         state.list = state.list.concat(payload.users)
         state.status = 'success'
         state.errorType = null
       })
-      .addCase(fetch.rejected, (state, { paylaod }) => {
+      .addCase(fetched.rejected, (state, { paylaod }) => {
         state.status = 'error'
         state.errorType = paylaod.errorType
+      })
+      .addCase(followedUser.fulfilled, (state, { payload }) => {
+        const user = state.list.find((user) => user._id === payload.userId)
+
+        if (user) {
+          user.currentUserFollows = true
+        }
+      })
+      .addCase(unfollowedUser.fulfilled, (state, { payload }) => {
+        const user = state.list.find((user) => user._id === payload.userId)
+
+        if (user) {
+          user.currentUserFollows = false
+        }
       })
   }
 })
 
 export const usersActions = {
   ...usersSlice.actions,
-  fetch,
-  follow
+  fetched,
+  followedUser,
+  unfollowedUser
 }
 
 export const selectUsers = (state) => {

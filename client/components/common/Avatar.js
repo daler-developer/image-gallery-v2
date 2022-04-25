@@ -8,7 +8,9 @@ const Avatar = ({ size, src, ...rest }) => {
       $size={size}
       src={src || emptyAvatar.src}
       {...rest}
-    />
+    >
+
+    </StyledWrapper>
   )
 }
 
@@ -20,12 +22,14 @@ const StyledWrapper = styled.img`
   border-radius: 50%;
   aspect-ratio: 1 / 1;
 
-  ${({ $size }) => $size === 'md' && `
+  ${({ $size }) => $size === 'sm' && `
     width: 40px;
   `}
-
+  ${({ $size }) => $size === 'md' && `
+    width: 60px;
+  `}
   ${({ $size }) => $size === 'lg' && `
-    width: 70px;
+    width: 80px;
   `}
 `
 

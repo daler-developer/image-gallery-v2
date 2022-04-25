@@ -1,10 +1,15 @@
 import pt from 'prop-types'
 import styled from 'styled-components'
+import { useDispatch } from 'react-redux'
 import Link from 'next/link'
 import Avatar from './Avatar'
 import Button from './Button'
+import { usersActions } from '../../redux/reducers/usersReducer'
+import { useState } from 'react'
 
 const UserCard = ({ user }) => {
+  const [isFollowLoading, setIsFollowLoading] = useState(false)
+  const [isUnfollowLoading, setIsUnfollowLoading] = useState(false)
   
   const dispatch = useDispatch()
 
@@ -12,11 +17,15 @@ const UserCard = ({ user }) => {
     viewProfileBtnClick() {
 
     },
-    followBtnClick() {
-
+    async followBtnClick() {
+      setIsFollowLoading(true)
+      await dispatch(usersActions.followedUser({ userId: user._id }))
+      setIsFollowLoading(false)
     },
-    unfollowBtnClick() {
-
+    async unfollowBtnClick() {
+      setIsUnfollowLoading(true)
+      await dispatch(usersActions.unfollowedUser({ userId: user._id }))
+      setIsUnfollowLoading(false)
     }
   }
 
@@ -34,19 +43,29 @@ const UserCard = ({ user }) => {
 
       {
         user.currentUserFollows ? (
-          <Button onClick={handlers.unfollowBtnClick} isLoading={false}>
-            Unfollow
-          </Button>
+          <StyledUnfollowBtn
+            onClick={handlers.unfollowBtnClick}
+            size='sm'
+            color='grey'
+            isLoading={isUnfollowLoading}
+          >
+            unfollow
+          </StyledUnfollowBtn>
         ) : (
-          <Button onClick={handlers.followBtnClick} isLoading={false}>
-            Follow
-          </Button>
+          <StyledFollowBtn
+            onClick={handlers.followBtnClick}
+            size='sm'
+            color='blue'
+            isLoading={isFollowLoading}
+          >
+            follow
+          </StyledFollowBtn>
         )
       }
 
       <Link href={`/profile/${user._id}`} passHref>
-        <StyledViewProfileLink type='button' size='md'>
-          View profile
+        <StyledViewProfileLink type='button' color='grey' size='sm'>
+          view profile
         </StyledViewProfileLink>
       </Link>
 
@@ -68,7 +87,7 @@ const StyledWrapper = styled.div`
   align-items: center;
   padding: 10px;
   border-radius: 4px;
-  border: 1px solid black;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
 `
 
 const StyledAvatar = styled(Avatar)`
@@ -81,16 +100,19 @@ const StyledUsername = styled.span`
   font-size: 18px;
 `
 
-const StyledViewProfileLink = styled.a`
-  margin-top: 40px;
+const StyledViewProfileLink = styled(Button)`
+  margin-top: 2px;
+  align-self: stretch;
 `
 
-const StyledFollowBtn = styled.button`
-  
+const StyledFollowBtn = styled(Button)`
+  margin-top: 30px;
+  align-self: stretch;
 `
 
-const StyledUnfollowBtn = styled.button`
-  
+const StyledUnfollowBtn = styled(Button)`
+  margin-top: 30px;
+  align-self: stretch;
 `
 
 export default UserCard

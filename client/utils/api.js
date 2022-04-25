@@ -13,21 +13,29 @@ export const getCurrentUser = async () => {
 }
 
 export const getUsers = async ({ offset = 0 } = {}) => {
-  return client.get(`/api/users?offset=${offset}&limit=2`)
+  return client.get(`/api/users?offset=${offset}`)
 }
 
-export const getUser = async ({ _id }) => {
+export const getUser = async ({ _id } = {}) => {
   return client.get(`/api/users/${_id}`)
 }
 
-export const followUser = async ({ _id }) => {
+export const followUser = async ({ _id } = {}) => {
   return client.patch(`/api/users/${_id}/follow`)
 }
 
-export const unfollowUser = async ({ _id }) => {
+export const unfollowUser = async ({ _id } = {}) => {
   return client.patch(`/api/users/${_id}/unfollow`)
 }
 
-export const updateProfile = async ({ _id, body }) => {
-  return client.patch(`/api/users/${_id}`, body)
+export const updateProfile = async ({ _id, form } = {}) => {
+  return client.patch(`/api/users/${_id}`, form)
+}
+
+export const fetchPosts = async ({ offset = 0 } = {}) => {
+  return client.get(`/api/posts?offset=${offset}`)
+}
+
+export const createPost = async ({ form } = {}) => {
+  return client.post(`/api/posts`, form)
 }
