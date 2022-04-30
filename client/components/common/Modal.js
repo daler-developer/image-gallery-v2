@@ -12,7 +12,7 @@ const Modal = ({ children, title, isHidden }) => {
 
   useOnClickOutside(rootRef, () => {
     if (!isHidden) {
-      dispatch(uiActions.activeModalChanged(null))
+      dispatch(uiActions.changedActiveModal(null))
     }
   })
 
@@ -64,13 +64,13 @@ const StyledModal = styled.div`
 `
 
 const StyledBody = styled.div`
-  padding: 10px;
+
 `
 
 const StyledHeader = styled.div`
-  text-align: center;
+  text-align: start;
   padding: 10px;
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid grey;
 `
 
 export default Modal

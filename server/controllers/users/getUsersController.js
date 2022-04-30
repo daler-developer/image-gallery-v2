@@ -1,18 +1,41 @@
+const { ObjectId } = require("mongodb")
 const collections = require("../../db/collections")
 const errorTypes = require('../../utils/errorTypes')
 
 const getUsersController = async (req, res) => {
   try {
     const currentUser = req.user
-    const { limit = 10, offset = 0 } = req.query
+    const { offset = 0, excludeCurrent = true } = req.query
+    const postLikedId = req.query.postLikedId ? new ObjectId(req.query.postLikedId) : null
+    const currentUserId = new ObjectId(currentUser._id)
 
-    const users = await collections.users.aggregate([
-      {
-        $match: {
-          _id: {
-            $ne: currentUser._id     
-          }
+    let pipelines = []
+
+    let $match = {
+      $and: []
+    }
+
+    if (excludeCurrent) {
+      $match.$and.push({
+        _id: {
+          $ne: currentUserId
         }
+      })
+    }
+
+    if (postLikedId) {
+      const post = await collections.posts.findOne({ _id: postLikedId })
+
+      $match.$and.push({
+        _id: {
+          $in: post.likes
+        }
+      })
+    }
+
+    pipelines = pipelines.concat([
+      {
+        $match
       },
       {
         $skip: offset
@@ -24,12 +47,14 @@ const getUsersController = async (req, res) => {
         }
       },
       {
-        $limit: limit
+        $limit: 10
       },
       {
         $unset: ['followings']
       }
-    ]).toArray()
+    ])
+
+    const users = await collections.users.aggregate(pipelines).toArray()
 
     return res.status(200).json({ users })
   } catch (e) {

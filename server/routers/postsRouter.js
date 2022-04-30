@@ -32,6 +32,11 @@ router.post(
   '/posts',
   populateUserMiddleware,
   postsImagesUpload.single('image'),
+  validator.body('text')
+    .trim()
+    .notEmpty()
+    .isLength({ min: 1, max: 100 }),
+  validateRequestMiddleware,
   createPostController
 )
 

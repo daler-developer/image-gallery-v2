@@ -5,7 +5,8 @@ import { authActions, selectIsLoadingCurrentUser } from '../redux/reducers/authR
 import FullScreenLoader from './common/FullScreenLoader'
 import AuthProtected from './common/AuthProtected'
 import UpdateProfileModal from './UpdateProfileModal'
-import CreatePostModal from './CreatePostModal'
+import CommentsModal from './CommentsModal'
+import AddPostModal from './AddPostModal'
 
 const AppWrapper = ({ children }) => {
   const isLoadingCurrentUser = useSelector((state) => selectIsLoadingCurrentUser(state))
@@ -25,7 +26,9 @@ const AppWrapper = ({ children }) => {
   return <>
     {children}
     <AuthProtected>
-      <UpdateProfileModal />
+      <AddPostModal />
+      {/* <UpdateProfileModal /> */}
+      <CommentsModal />
     </AuthProtected>
   </>
 }

@@ -6,6 +6,7 @@ const getPostsController = async (req, res) => {
   try {
     const creatorId = req.query.creatorId ? new ObjectId(req.query.creatorId) : null
     const currentUser = req.user
+    const offset = req.query.offset || 0
 
     const pipelines = []
 
@@ -18,12 +19,14 @@ const getPostsController = async (req, res) => {
     //   })
     // } else {
     //   // otherwise posts from users current user follows to
-    //   pipelines.push({
-    //     $match: {
-    //       creatorId: { $in: currentUser.followings }
-    //     }
-    //   })
-    // }
+    pipelines.push({
+      $match: {
+        $or: [
+          { creatorId: { $in: currentUser.followings } },
+          { creatorId: currentUser._id }
+        ]
+      }
+    })
 
     pipelines.push({
       $lookup: {
@@ -39,15 +42,21 @@ const getPostsController = async (req, res) => {
         creator: { $first: '$creators' },
         numLikes: { $size: '$likes' },
         numComments: { $size: '$comments' },
+        likedByCurrentUser: { $in: [currentUser._id, '$likes'] }
       }
     })
 
     pipelines.push({
-      $unset: ['likes', 'comments', 'creators', 'creator.password', 'creator.followings']
+      $unset: ['likes', 'comments', 'creatorId', 'creators', 'creator.password', 'creator.followings']
     })
 
+    
     pipelines.push({
-      $limit: 10
+      $skip: offset
+    })
+    
+    pipelines.push({
+      $limit: 2
     })
 
     const foundPosts = await collections.posts.aggregate(pipelines).toArray()

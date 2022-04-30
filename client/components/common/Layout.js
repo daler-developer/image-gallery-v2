@@ -12,7 +12,7 @@ const Layout = ({ children }) => {
 
         <Header />
 
-        <Nav />
+        {/* <Nav /> */}
 
         <Container>
           <StyledBody>
@@ -31,10 +31,11 @@ Layout.propTypes = {
 
 const StyledWrapper = styled.div`
   padding-top: 100px;
+  padding-bottom: 100px;
 `
 
 const StyledBody = styled.div`
-  margin-top: 50px;
+
 `
 
 export default Layout

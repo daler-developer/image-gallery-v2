@@ -6,6 +6,7 @@ const createPostController = async (req, res) => {
   try {
     const file = req.file
     const currentUser = req.user
+    const { text } = req.body
 
     if (!file) {
       return res.status(400).json({ errorType: errorTypes.COMMON_VALIDATION_ERROR })
@@ -13,6 +14,7 @@ const createPostController = async (req, res) => {
 
     const { insertedId } = await collections.posts.insertOne({
       imageUrl: generatePostImageFileUrl(file.filename),
+      text,
       likes: [],
       comments: [],
       creatorId: currentUser._id
@@ -40,7 +42,7 @@ const createPostController = async (req, res) => {
         }
       },
       {
-        $unset: ['likes', 'comments', 'creators', 'creator.password']
+        $unset: ['likes', 'comments', 'creatorId', 'creators', 'creator.password']
       }
     ]).toArray()
 

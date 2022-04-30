@@ -13,26 +13,26 @@ const Home = () => {
   const imageInputRef = useRef(null)
 
   const posts = useSelector((state) => selectFeedPosts(state))
-  const feedPostsFetchingStatus = useSelector((state) => selectFeedPostsFetchingStatus(state))
+  const status = useSelector((state) => selectFeedPostsFetchingStatus(state))
 
   useEffect(() => {
-    if (feedPostsFetchingStatus === 'idle') {
-      dispatch(postsActions.fetchedFeedPosts())
+    if (status === 'idle') {
+      dispatch(postsActions.fetchedFeedPosts({ offset: posts.length }))
     }
   }, [])
 
   const handlers = {
     imageInputChange(e) {
       dispatch(postsActions.created({ image: e.target.files[0] }))
+    },
+    loadMoreBtnClick() {
+      dispatch(postsActions.fetchedFeedPosts({ offset: posts.length }))
     }
   }
 
   return <>
     <StyledWrapper>
-      <Button onClick={() => imageInputRef.current?.click()} size='md'>
-        Add
-      </Button>
-      <StyledPosts list={posts} />
+      <StyledPosts list={posts} isFetching={status === 'fetching'} onLoadMoreBtnClick={handlers.loadMoreBtnClick} />
     </StyledWrapper>
 
     <input type="file" ref={imageInputRef} onChange={handlers.imageInputChange} hidden />
@@ -40,15 +40,15 @@ const Home = () => {
 }
 
 const StyledWrapper = styled.div`
-  
-`
-
-const StyledContainer = styled(Container)`
-
+  display: flex;
+  flex-direction: column;
 `
 
 const StyledPosts = styled(Posts)`
   margin-top: 20px;
+  align-self: center;
+  max-width: 500px;
+  width: 100%;
 `
 
 Home.getLayout = (page) => {

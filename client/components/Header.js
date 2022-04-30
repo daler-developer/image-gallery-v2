@@ -1,15 +1,22 @@
 import styled from 'styled-components'
+import Link from 'next/link'
 import useCurrentUser from '../hooks/useCurrentUser'
 import Container from './common/Container'
 import Avatar from './common/Avatar'
 import logo from '../public/logo.jpg'
+import IconButton from './common/IconButton'
+import { useDispatch } from 'react-redux'
+import { uiActions } from '../redux/reducers/uiReducer'
 
 const Header = ({}) => {
-
   const currentUser = useCurrentUser()
 
-  const handleLogoutBtnClick = () => {
-    currentUser.logout()
+  const dispatch = useDispatch()
+
+  const handlers = {
+    addPostBtnClick() {
+      dispatch(uiActions.changedActiveModal('add-post'))
+    }
   }
 
   return (
@@ -17,14 +24,39 @@ const Header = ({}) => {
       <Container>
         <StyledBody>
 
+
           <StyledLogo
             src={logo.src}
           />
+          
 
-          <StyledAvatar
-            src={currentUser.avatarUrl}
-            onClick={() => currentUser.logout()}
-          />
+          <StyledNav>
+
+            <Link href='/home' passHref>
+              <IconButton size='sm'>
+                home
+              </IconButton>
+            </Link>
+
+            <Link href='/users' passHref>
+              <IconButton size='sm'>
+                people
+              </IconButton>
+            </Link>
+
+            <IconButton size='sm' title='add image' onClick={handlers.addPostBtnClick}>
+              add
+            </IconButton>
+            
+            <Link href={`/profile/${currentUser._id}`} passHref>
+              <StyledAvatar
+                src={currentUser.avatarUrl}
+                size='sm'
+              />
+            </Link>
+
+          </StyledNav>
+
 
         </StyledBody>
       </Container>
@@ -49,12 +81,19 @@ const StyledBody = styled.div`
   padding: 3px 0;
 `
 
+const StyledNav = styled.nav`
+  display: flex;
+  align-items: center;
+  column-gap: 4px;
+`
+
 const StyledLogo = styled.img`
   aspect-ratio: 1 / 1;
   height: 100%;
 `
 
 const StyledAvatar = styled(Avatar)`
+  cursor: pointer;
 `
 
 export default Header

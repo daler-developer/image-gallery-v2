@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { useMemo } from 'react'
 import Spinner from './Spinner'
 
-const Button = ({ children, size, color = 'blue', isLoading = false, ...rest }) => {
+const Button = ({ children, size, color = 'blue', isLoading = false, roundedBorder = true, ...rest }) => {
 
   const spinnerSize = useMemo(() => size, [size])
 
@@ -18,7 +18,7 @@ const Button = ({ children, size, color = 'blue', isLoading = false, ...rest }) 
   }, [color])
 
   return (
-    <StyledWrapper disabled={isLoading} $color={color} $size={size} {...rest}>
+    <StyledWrapper disabled={isLoading} $roundedBorder={roundedBorder} $color={color} $size={size} {...rest}>
       {
         isLoading ? (
           <Spinner size={spinnerSize} color={spinnerColor} />
@@ -33,11 +33,11 @@ const Button = ({ children, size, color = 'blue', isLoading = false, ...rest }) 
 Button.propTypes = {
   size: pt.oneOf(['sm', 'md', 'lg']),
   color: pt.oneOf(['blue', 'grey', 'white', 'red']),
+  roundedBorder: pt.bool,
   isLoading: pt.bool
 }
 
 const StyledWrapper = styled.button`
-  border-radius: 3px;
   padding: 3px 5px;
   display: flex;
   align-items: center;
@@ -71,6 +71,10 @@ const StyledWrapper = styled.button`
   ${({ $color }) => $color === 'red' && `
     background-color: red;
     color: white;
+  `}
+
+  ${({ $roundedBorder }) => $roundedBorder && `
+    border-radius: 3px;
   `}
 `
 

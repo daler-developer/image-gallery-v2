@@ -18,12 +18,29 @@ const router = new express.Router()
 
 router.get(
   '/users',
-  validator.query('limit')
-    .optional()
-    .toInt(),
   validator.query('offset')
     .optional()
     .toInt(),
+  validator.query('postLikedId')
+    .optional()
+    .trim(),
+  validator.query('excludeCurrent')
+    .optional()
+    .trim()
+    .custom((v) => {
+      if (v === 'yes' || v === 'no' || !v) {
+        return Promise.resolve()
+      } else {
+        return Promise.reject()
+      }
+    })
+    .customSanitizer((v) => {
+      if (v === 'yes') {
+        return true
+      } else if (v === 'no') {
+        return false
+      }
+    }),
   validateRequestMiddleware,
   populateUserMiddleware, 
   getUsersController

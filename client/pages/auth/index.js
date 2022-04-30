@@ -57,6 +57,7 @@ const Auth = () => {
       <StyledForm onSubmit={form.handleSubmit}>
 
         <Input
+          size='md'
           error={form.touched.username && form.errors.username}
           inputProps={{
             placeholder:'Username',
@@ -65,6 +66,7 @@ const Auth = () => {
         />
 
         <Input
+          size='md'
           error={form.touched.password && form.errors.password}
           inputProps={{
             placeholder:'Password',

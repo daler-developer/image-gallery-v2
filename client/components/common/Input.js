@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 const Input = ({ size, error, inputProps, ...rest }) => {
   return (
-    <StyledWrapper>
+    <StyledWrapper {...rest}>
 
       <StyledInput
         size={size}
@@ -37,22 +37,17 @@ const StyledWrapper = styled.div`
   display: inline-flex;
   flex-direction: column;
   row-gap: 3px;
-  border: 1px solid black;
+  background-color: rgba(0, 0, 0, .05);
 `
 
 const StyledInput = styled.input`
-  text-indent: 4px;
-  height: 35px; 
+  flex: 1 0 0;
+  text-indent: 8px;
+
+  ${({ size }) => size === 'md' && `
+    flex: 0 0 40px;
+  `}
 `
-  // ${({ size }) => size === 'ms' && `
-  //   height: 40px; 
-  // `}
-  // ${({ size }) => size === 'md' && `
-  //   height: 40px; 
-  // `}
-  // ${({ size }) => size === 'lg' && `
-  //   padding: 7px 0;  
-  // `}
 
 const StyledErrorMessage = styled.div`
   color: red;

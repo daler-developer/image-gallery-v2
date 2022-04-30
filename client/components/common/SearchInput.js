@@ -32,7 +32,8 @@ const StyledWrapper = styled.div`
 const StyledIcon = styled(Icon)`
   align-self: center;
   flex: 0 0 auto;
-  color: grey
+  color: grey;
+  background-color: transparent;
 `
 
 const StyledInput = styled.input`

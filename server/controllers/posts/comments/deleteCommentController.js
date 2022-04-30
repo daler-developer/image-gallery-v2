@@ -4,7 +4,6 @@ const errorTypes = require('../../../utils/errorTypes')
 
 const deleteCommentController = async (req, res) => {
   try {
-
     return res.status(200).json({ comments: foundComments })
   } catch (e) {
     console.log(e)
