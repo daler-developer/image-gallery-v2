@@ -1,8 +1,9 @@
 const { ObjectId } = require('mongodb')
 const collections = require('../../../db/collections')
 const errorTypes = require('../../../utils/errorTypes')
+const RequestError = require('../../../utils/RequestError')
 
-const createCommentController = async (req, res) => {
+const createCommentController = async (req, res, next) => {
   try {
     const { text } = req.body
     const postId = new ObjectId(req.params.postId)
@@ -11,7 +12,7 @@ const createCommentController = async (req, res) => {
     const post = await collections.posts.findOne({ _id: postId })
 
     if (!post) {
-      return res.status(404).json({ errorType: errorTypes.POSTS_NOT_FOUND })
+      throw new RequestError(404, errorTypes.POSTS_POST_NOT_FOUND)
     }
 
     const { insertedId } = await collections.comments.insertOne({ text, creatorId })
@@ -44,8 +45,7 @@ const createCommentController = async (req, res) => {
 
     return res.status(200).json({ comment })
   } catch (e) {
-    console.log(e)
-    return res.status(500).json({ type: errorTypes.COMMON_SERVER_ERROR })
+    return next(e)
   }
 }
 

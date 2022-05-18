@@ -2,7 +2,7 @@ const { ObjectId } = require('mongodb')
 const collections = require('../../db/collections')
 const errorTypes = require('../../utils/errorTypes')
 
-const getPostsController = async (req, res) => {
+const getPostsController = async (req, res, next) => {
   try {
     const creatorId = req.query.creatorId ? new ObjectId(req.query.creatorId) : null
     const currentUser = req.user
@@ -10,15 +10,6 @@ const getPostsController = async (req, res) => {
 
     const pipelines = []
 
-    // get posts created by specific user
-    // if (creatorId) {
-    //   pipelines.push({
-    //     $match: {
-    //       creatorId
-    //     }
-    //   })
-    // } else {
-    //   // otherwise posts from users current user follows to
     pipelines.push({
       $match: {
         $or: [
@@ -63,8 +54,7 @@ const getPostsController = async (req, res) => {
 
     return res.status(200).json({ posts: foundPosts })
   } catch (e) {
-    console.log(e)
-    return res.status(500).json({ type: errorTypes.COMMON_SERVER_ERROR })
+    return next(e)
   }
 }
 

@@ -2,7 +2,7 @@ const { ObjectId } = require("mongodb")
 const collections = require("../../db/collections")
 const errorTypes = require('../../utils/errorTypes')
 
-const getUsersController = async (req, res) => {
+const getUsersController = async (req, res, next) => {
   try {
     const currentUser = req.user
     const { offset = 0, excludeCurrent = true } = req.query
@@ -58,8 +58,7 @@ const getUsersController = async (req, res) => {
 
     return res.status(200).json({ users })
   } catch (e) {
-    console.log(e)
-    return res.status(500).json({ type: errorTypes.COMMON_SERVER_ERROR })
+    return next(e)
   }
 }
 

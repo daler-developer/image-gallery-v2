@@ -1,6 +1,7 @@
 const collections = require('../../db/collections')
 const errorTypes = require('../../utils/errorTypes')
 const { generatePostImageFileUrl } = require('../../utils/helpers')
+const RequestError = require('../../utils/RequestError')
 
 const createPostController = async (req, res) => {
   try {
@@ -9,7 +10,7 @@ const createPostController = async (req, res) => {
     const { text } = req.body
 
     if (!file) {
-      return res.status(400).json({ errorType: errorTypes.COMMON_VALIDATION_ERROR })
+      throw new RequestError(400, errorTypes.COMMON_VALIDATION_ERROR)
     }
 
     const { insertedId } = await collections.posts.insertOne({

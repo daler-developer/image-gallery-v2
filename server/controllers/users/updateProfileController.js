@@ -2,16 +2,17 @@ const { ObjectId } = require("mongodb")
 const collections = require("../../db/collections")
 const errorTypes = require('../../utils/errorTypes')
 const { generateAvatarFileUrl } = require("../../utils/helpers")
+const RequestError = require('../../utils/RequestError')
 
-const updateProfileController = async (req, res) => {
+const updateProfileController = async (req, res, next) => {
   try {
     const currentUser = req.user
-    const { _id } = req.params
+    const userId = new ObjectId(req.params._id)
     const { username, password, removeAvatar } = req.body
     const avatarFile = req.file
 
-    if (currentUser._id.toString() !== _id) {
-      return res.status(400).json({ type: errorTypes.AUTH_PERMISSION_DENIED })
+    if (currentUser._id.equals(userId)) {
+      throw new RequestError(400, errorTypes.AUTH_PERMISSION_DENIED)
     }
 
     const updatedFields = {}
@@ -20,7 +21,7 @@ const updateProfileController = async (req, res) => {
       const userWithSameUsername = await collections.users.findOne({ username })
 
       if (userWithSameUsername) {
-        return res.status(500).json({ type: errorTypes.USERS_USER_WITH_SAME_USERNAME_EXISTS })
+        throw new RequestError(400, errorTypes.USERS_USER_WITH_SAME_USERNAME_EXISTS)
       }
 
       updatedFields.username = username
@@ -31,18 +32,18 @@ const updateProfileController = async (req, res) => {
     }
 
     if (removeAvatar) {
-      await collections.users.updateOne({ _id: new ObjectId(_id) }, { $unset: { avatarUrl: '' } })
+      await collections.users.updateOne({ _id: userId }, { $unset: { avatarUrl: '' } })
     } else if (avatarFile) {
       updatedFields.avatarUrl = generateAvatarFileUrl(avatarFile.filename)
     }
 
-    await collections.users.updateOne({ _id: new ObjectId(_id) }, { $set: updatedFields })
+    await collections.users.updateOne({ _id: userId }, { $set: updatedFields })
 
-    const user = await collections.users.findOne({ _id: new ObjectId(_id) })
+    const user = await collections.users.findOne({ _id: userId })
 
     return res.json({ user })
   } catch (e) {
-    return res.status(500).json({ type: errorTypes.COMMON_SERVER_ERROR })
+    return next(e)
   }
 }
 

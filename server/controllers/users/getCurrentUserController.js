@@ -1,7 +1,7 @@
 const collections = require("../../db/collections")
 const errorTypes = require('../../utils/errorTypes')
 
-const getCurrentUserController = async (req, res) => {
+const getCurrentUserController = async (req, res, next) => {
   try {
     const currentUser = req.user
 
@@ -10,14 +10,18 @@ const getCurrentUserController = async (req, res) => {
         $match: { _id: currentUser._id }
       },
       {
-        $unset: ['followings']
+        $set: {
+          numFollowings: { $size: '$followings' },
+        }
+      },
+      {
+        $unset: ['followings', 'password']
       }
     ]).toArray()
 
     return res.status(200).json({ user: usersFound[0] })
   } catch (e) {
-    console.log(e)
-    return res.status(500).json({ type: errorTypes.COMMON_SERVER_ERROR })
+    return next(e)
   }
 }
 

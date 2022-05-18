@@ -2,12 +2,11 @@ const { ObjectId } = require('mongodb')
 const collections = require('../../../db/collections')
 const errorTypes = require('../../../utils/errorTypes')
 
-const deleteCommentController = async (req, res) => {
+const deleteCommentController = async (req, res, next) => {
   try {
     return res.status(200).json({ comments: foundComments })
   } catch (e) {
-    console.log(e)
-    return res.status(500).json({ type: errorTypes.COMMON_SERVER_ERROR })
+    return next(e)
   }
 }
 

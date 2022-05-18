@@ -1,8 +1,12 @@
-const { MongoClient, ServerApiVersion } = require('mongodb')
+const { MongoClient } = require('mongodb')
 
 const client = new MongoClient(
-  process.env.MONGO_URL, 
-  { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 }
+  process.env.MONGO_URL,
+  {
+    maxPoolSize:50,
+    wtimeoutMS:2500,
+    useNewUrlParser:true
+  }
 )
 
 module.exports = client

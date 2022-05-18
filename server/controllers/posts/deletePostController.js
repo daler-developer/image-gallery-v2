@@ -1,28 +1,28 @@
 const { ObjectId } = require('mongodb')
 const collections = require('../../db/collections')
 const errorTypes = require('../../utils/errorTypes')
+const RequestError = require('../../utils/RequestError')
 
-const deletePostController = async (req, res) => {
+const deletePostController = async (req, res, next) => {
   try {
    const currentUser = req.user
-   const params = req.params
+   const postId = new ObjectId(params._id)
 
-    const post = await collections.posts.findOne({ _id: new ObjectId(params._id) })
+    const post = await collections.posts.findOne({ _id: postId })
 
     if (!post) {
-      return res.status(404).json({ errorType: errorTypes.POSTS_NOT_FOUND })
+      throw new RequestError(404, errorTypes.POSTS_POST_NOT_FOUND)
     }
 
     if (!post.creatorId.equals(currentUser._id)) {
-      return res.status(400).json({ errorType: errorTypes.POSTS_FORBIDDEN_TO_DELETE })
+      throw new RequestError(400, errorTypes.POSTS_FORBIDDEN_TO_DELETE_POST)
     }
 
-    await collections.posts.deleteOne({ _id: new ObjectId(params._id) })
+    await collections.posts.deleteOne({ _id: postId })
 
     return res.status(200).json()
   } catch (e) {
-    console.log(e)
-    return res.status(500).json({ type: errorTypes.COMMON_SERVER_ERROR })
+    return next(e)
   }
 }
 

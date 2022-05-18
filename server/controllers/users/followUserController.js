@@ -1,29 +1,29 @@
 const { ObjectId } = require("mongodb")
 const collections = require("../../db/collections")
 const errorTypes = require('../../utils/errorTypes')
+const RequestError = require('../../utils/RequestError')
 
-const followUserController = async (req, res) => {
+const followUserController = async (req, res, next) => {
   try {
     const currentUser = req.user
-    const { _id } = req.params
+    const userId = new ObjectId(req.params._id)
     
-    const userFollowing = await collections.users.findOne({ _id: new ObjectId(_id) })
+    const userFollowing = await collections.users.findOne({ _id: userId })
 
     if (!userFollowing) {
-      return res.status(500).json({ type: errorTypes.USERS_USER_DOES_NOT_EXIST})
+      throw new RequestError(404, errorTypes.USERS_USER_DOES_NOT_EXIST)
     }
 
     // check if current user is already following this user
-    if (currentUser.followings.find((follow) => follow.toString() === _id)) {
-      return res.status(500).json({ errorType: errorTypes.USERS_ALREADY_FOLLOWING })
+    if (currentUser.followings.find((_id) => _id.equals(userId))) {
+      throw new RequestError(400, errorTypes.USERS_ALREADY_FOLLOWING_USER)
     }
 
     await collections.users.updateOne({ _id: currentUser._id }, { $push: { followings: userFollowing._id } })
 
     return res.status(200).end()
   } catch (e) {
-    console.log(e)
-    return res.status(500).json({ type: errorTypes.COMMON_SERVER_ERROR })
+    return next(e)
   }
 }
 

@@ -1,16 +1,17 @@
 const { ObjectId } = require('mongodb')
 const collections = require('../../db/collections')
 const errorTypes = require('../../utils/errorTypes')
+const RequestError = require('../../utils/RequestError')
 
-const getUserController = async (req, res) => {
+const getUserController = async (req, res, next) => {
   try {
-    const { _id } = req.params
+    const userId = new ObjectId(req.params._id)
     const currentUser = req.user
     
     const users = await collections.users.aggregate([
       {
         $match: {
-          _id: new ObjectId(_id)
+          _id: userId
         } 
       },
       {
@@ -25,13 +26,12 @@ const getUserController = async (req, res) => {
     ]).toArray()
 
     if (!users.length) {
-      return res.status(500).json({ type: errorTypes.USERS_USER_DOES_NOT_EXIST})
+      throw new RequestError(404, errorTypes.USERS_USER_DOES_NOT_EXIST)
     }
     
     return res.status(200).json({ user: users[0] })
   } catch (e) {
-    console.log(e)
-    return res.status(500).json({ type: errorTypes.COMMON_SERVER_ERROR })
+    return next(e)
   }
 }
 
