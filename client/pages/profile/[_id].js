@@ -1,28 +1,57 @@
 import styled from 'styled-components'
+import axios from 'axios'
 import Layout from '../../components/common/Layout'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Avatar from '../../components/common/Avatar'
+import { useRouter } from 'next/router'
+import * as api from '../../utils/api'
+import Spinner from '../../components/common/Spinner'
+import ErrorMessage from '../../components/common/ErrorMessage'
 
 const Profile = () => {
+  const [user, setUser] = useState(null)
+  const [isFetching, setIsFetching] = useState(true)
+  const [errorType, setErrorType] = useState(null)
 
+  const router = useRouter()
 
   useEffect(() => {
-
+    loadUser()
   }, [])
+
+  const loadUser = async () => {
+    try {
+      
+    } catch (e) {
+      
+    }
+    setIsFetching(true)
+
+    const { data } = await api.getUser({ _id: router.query._id })
+
+    setUser(data.user)
+    setIsFetching(false)
+  }
 
   return (
     <StyledWrapper>
       
       {
-        true && (
+        isFetching ? (
+          <Spinner />
+        ) : errorType ? (
+          <ErrorMessage type={errorType} />
+        ) : <>
           <StyledBasicInfo>
             <StyledAvatar />
-            <StyledUsername>@{}</StyledUsername>
-            <StyledNumFollowings>{}</StyledNumFollowings>
-            <StyledNumFollowers>{20}</StyledNumFollowers>
-            <StyledNumPosts>{30}</StyledNumPosts>
+            <StyledUsername>@{user.username}</StyledUsername>
+            <StyledNumFollowings>{user.numFollowings}</StyledNumFollowings>
+            <StyledNumFollowers>{user.numFollowers}</StyledNumFollowers>
+            <StyledNumPosts>{user.numPosts}</StyledNumPosts>
           </StyledBasicInfo>
-        )
+
+          
+        </>
       }
 
     </StyledWrapper>
@@ -75,6 +104,10 @@ const StyledNumFollowers = styled.span`
 
 const StyledNumPosts = styled.span`
   grid-area: numPosts;
+`
+
+const Styled = styled.div`
+  
 `
 
 export default Profile

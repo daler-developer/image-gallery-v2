@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { useMemo } from 'react'
 import Spinner from './Spinner'
 
-const Button = ({ children, size, color = 'blue', isLoading = false, roundedBorder = true, ...rest }) => {
+const Button = ({ children, size = 'md', color = 'blue', isLoading = false, roundedBorder = true, ...rest }) => {
 
   const spinnerSize = useMemo(() => size, [size])
 
@@ -48,16 +48,16 @@ const StyledWrapper = styled.button`
   }
 
   ${({ $size }) => $size === 'sm' && `
-    height: 30px;
-    font-size: 15px;
+    padding: 3px 10px;
+    font-size: 12px;
   `}
   ${({ $size }) => $size === 'md' && `
-    height: 35px;
-    font-size: 18px;
+    padding: 6px 15px;
+    font-size: 15px;
   `}
   ${({ $size }) => $size === 'lg' && `
-    height: 50px;
-    font-size: 22px;
+    padding: 8px 20px;
+    font-size: 18px;
   `}
 
   ${({ $color }) => $color === 'blue' && `

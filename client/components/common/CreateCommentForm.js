@@ -6,8 +6,10 @@ import Input from './Input'
 import * as yup from 'yup'
 import { postsActions } from '../../redux/reducers/postsReducer'
 import { useDispatch } from 'react-redux'
+import { useRef } from 'react'
 
 const CreateCommentForm = ({ postId, onNewCommentCreated, ...rest }) => {
+  const inputRef = useRef(null)
 
   const dispatch = useDispatch()
 
@@ -38,16 +40,16 @@ const CreateCommentForm = ({ postId, onNewCommentCreated, ...rest }) => {
           placeholder: 'Text',
           ...form.getFieldProps('text')
         }}
+        ref={inputRef}
       />
-      <StyledLeaveCommentBtn type='submit' isLoading={form.isSubmitting}>
-        leave
+      <StyledLeaveCommentBtn type='submit' isLoading={form.isSubmitting} roundedBorder={false}>
+        Create
       </StyledLeaveCommentBtn>
     </StyledWrapper>
   )
 }
 
 CreateCommentForm.propTypes = {
-  postId: pt.string.isRequired,
   onNewCommentCreated: pt.func
 }
 

@@ -1,19 +1,24 @@
 import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
 import Layout from '../../components/common/Layout'
-import Container from '../../components/common/Container'
-import Button from '../../components/common/Button'
-import { useEffect, useRef } from 'react'
-import { postsActions, selectFeedPosts, selectFeedPostsFetchingStatus } from '../../redux/reducers/postsReducer'
+import { useEffect, useRef, useState } from 'react'
+import { postsActions, selectFeedPosts, selectFeedPostsErrorType, selectFeedPostsFetchingStatus } from '../../redux/reducers/postsReducer'
 import Posts from '../../components/common/Posts'
+import SearchInput from '../../components/common/SearchInput'
+import useDebounce from '../../hooks/useDebounce'
 
 const Home = () => {
+  const [searchInputValue, setSearchInputValue] = useState('')
+
+  const debounceValue = useDebounce(searchInputValue, 2000)
+
   const dispatch = useDispatch()
 
   const imageInputRef = useRef(null)
 
   const posts = useSelector((state) => selectFeedPosts(state))
   const status = useSelector((state) => selectFeedPostsFetchingStatus(state))
+  const errorType = useSelector((state) => selectFeedPostsErrorType(state))
 
   useEffect(() => {
     if (status === 'idle') {
@@ -32,7 +37,22 @@ const Home = () => {
 
   return <>
     <StyledWrapper>
-      <StyledPosts list={posts} isFetching={status === 'fetching'} onLoadMoreBtnClick={handlers.loadMoreBtnClick} />
+
+      <StyledSearchInput
+        inputProps={{
+          value: searchInputValue,
+          onChange: (e) => setSearchInputValue(e.target.value),
+          placeholder: 'Search'
+        }}
+      />
+
+      <StyledPosts
+        list={posts} 
+        isFetching={status === 'fetching'}
+        errorType={errorType} 
+        onLoadMoreBtnClick={handlers.loadMoreBtnClick} 
+      />
+
     </StyledWrapper>
 
     <input type="file" ref={imageInputRef} onChange={handlers.imageInputChange} hidden />
@@ -42,6 +62,10 @@ const Home = () => {
 const StyledWrapper = styled.div`
   display: flex;
   flex-direction: column;
+`
+
+const StyledSearchInput = styled(SearchInput)`
+  margin-top: 20px;
 `
 
 const StyledPosts = styled(Posts)`

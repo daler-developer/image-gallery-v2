@@ -1,14 +1,22 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import * as api from '../../utils/api'
 
-const fetchedFeedPosts = createAsyncThunk('posts/fetched-feed-posts', async ({ offset } = {}) => {
+const fetchedFeedPosts = createAsyncThunk('posts/fetched-feed-posts', async ({ offset } = {}, thunkAPI) => {
   try {
     const { data } = await api.fetchPosts({ offset })
 
-
     return data
   } catch (e) {
-    console.log(e.response)
+    return thunkAPI.rejectWithValue({ errorType: e.response.data.errorType })
+  }
+})
+
+const searchedFeedPosts = createAsyncThunk('posts/searched-feed-posts', async ({ searchQuery }) => {
+  try {
+    const { data } = await api.searchPosts({ searchQuery })
+
+    return { posts: data.posts }
+  } catch (e) {
     return thunkAPI.rejectWithValue({ errorType: e.response.data.errorType })
   }
 })
@@ -72,6 +80,16 @@ const postLikeRemoved = createAsyncThunk('posts/post-like-removed', async ({ pos
   }
 })
 
+const postDeleted = createAsyncThunk('posts/post-deleted', async ({ postId }) => {
+  try {
+    await api.deletePost({ postId })
+
+    return { postId }
+  } catch (e) {
+    return thunkAPI.rejectWithValue({ errorType: e.response.data.errorType })
+  }
+})
+
 const initialState = {
   feed: {
     list: [],
@@ -99,6 +117,7 @@ const postsSlice = createSlice({
         state.feed.errorType = null
       })
       .addCase(fetchedFeedPosts.rejected, (state, { payload }) => {
+        console.log(payload)
         state.feed.status = 'error'
         state.feed.errorType = payload.errorType
       })
@@ -132,6 +151,13 @@ const postsSlice = createSlice({
           post.likedByCurrentUser = false
         }
       })
+
+      .addCase(postDeleted.fulfilled, (state, { payload }) => {
+        state.feed.list.splice(
+          state.feed.list.findIndex((post) => post._id === payload.postId),
+          1
+        )
+      })
   }
 })
 
@@ -143,6 +169,10 @@ export const selectFeedPostsFetchingStatus = (state) => {
   return state.posts.feed.status
 }
 
+export const selectFeedPostsErrorType = (state) => {
+  return state.posts.feed.errorType
+}
+
 export const postsActions = {
   ...postsSlice.actions,
   fetchedFeedPosts,
@@ -150,7 +180,9 @@ export const postsActions = {
   postLiked,
   postLikeRemoved,
   commentCreated,
-  commentsFetched
+  commentsFetched,
+  postDeleted,
+  searchedFeedPosts
 }
 
 export default postsSlice.reducer

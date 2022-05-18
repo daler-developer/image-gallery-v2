@@ -14,6 +14,7 @@ const GlobalStyle = createGlobalStyle`
     font-size: 16;
     color: black;
     font-family: sans-serif;
+    background-color: #fafafa;
   }
 
   a {

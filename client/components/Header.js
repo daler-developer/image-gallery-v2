@@ -33,25 +33,25 @@ const Header = ({}) => {
           <StyledNav>
 
             <Link href='/home' passHref>
-              <IconButton size='sm'>
+              <IconButton size='md'>
                 home
               </IconButton>
             </Link>
 
             <Link href='/users' passHref>
-              <IconButton size='sm'>
+              <IconButton size='md'>
                 people
               </IconButton>
             </Link>
 
-            <IconButton size='sm' title='add image' onClick={handlers.addPostBtnClick}>
+            <IconButton size='md' title='add image' onClick={handlers.addPostBtnClick}>
               add
             </IconButton>
             
             <Link href={`/profile/${currentUser._id}`} passHref>
               <StyledAvatar
                 src={currentUser.avatarUrl}
-                size='sm'
+                size='md'
               />
             </Link>
 
@@ -71,7 +71,7 @@ const StyledWrapper = styled.div`
   width: 100%;
   background-color: white;
   z-index: 1000;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgb(219,219,219);
 `
 
 const StyledBody = styled.div`

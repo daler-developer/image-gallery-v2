@@ -45,7 +45,7 @@ const UserCard = ({ user }) => {
         user.currentUserFollows ? (
           <StyledUnfollowBtn
             onClick={handlers.unfollowBtnClick}
-            size='sm'
+            size='md'
             color='grey'
             isLoading={isUnfollowLoading}
           >
@@ -54,7 +54,7 @@ const UserCard = ({ user }) => {
         ) : (
           <StyledFollowBtn
             onClick={handlers.followBtnClick}
-            size='sm'
+            size='md'
             color='blue'
             isLoading={isFollowLoading}
           >
@@ -64,7 +64,7 @@ const UserCard = ({ user }) => {
       }
 
       <Link href={`/profile/${user._id}`} passHref>
-        <StyledViewProfileLink type='button' color='grey' size='sm'>
+        <StyledViewProfileLink type='button' color='grey' size='md'>
           view profile
         </StyledViewProfileLink>
       </Link>

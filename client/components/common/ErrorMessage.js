@@ -4,7 +4,7 @@ import generateErrorMessage  from '../../utils/generateErrorMessage'
 
 const ErrorMessage = ({ type, ...rest }) => {
   return (
-    <StyledWrapper>
+    <StyledWrapper {...rest}>
       {generateErrorMessage(type)}
     </StyledWrapper>
   )

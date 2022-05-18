@@ -2,7 +2,7 @@ import pt from 'prop-types'
 import styled from 'styled-components'
 import Icon from './Icon'
 
-const IconButton = ({ variant = 'outlined', color='light', size, children, ...rest }) => {
+const IconButton = ({ variant = 'outlined', color='light', size = 'md', children, ...rest }) => {
   return (
     <StyledWrapper $size={size} $color={color} {...rest}>
       <Icon variant={variant}>{children}</Icon>
@@ -29,7 +29,7 @@ const StyledWrapper = styled.button`
   }
 
   ${({ $size }) => $size === 'sm' && `
-    width: 40px;
+    width: 30px;
   `}
   ${({ $size }) => $size === 'md' && `
     width: 40px;

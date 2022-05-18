@@ -3,8 +3,9 @@ import styled from 'styled-components'
 import IconButton from './IconButton'
 import Post from './Post'
 import Spinner from './Spinner'
+import ErrorMessage from './ErrorMessage'
 
-const Posts = ({ list, isFetching, onLoadMoreBtnClick, ...rest }) => {
+const Posts = ({ list, isFetching, errorType = null, onLoadMoreBtnClick, ...rest }) => {
   return (
     <StyledWrapper {...rest}>
 
@@ -27,11 +28,12 @@ const Posts = ({ list, isFetching, onLoadMoreBtnClick, ...rest }) => {
       {
         isFetching ? (
           <StyledSpinner size='md' color='black' />
-        ) : (
+        ) : <>
+          {errorType && <StyledErrorMessage type={errorType} />}
           <StyledLoadMoreBtn size='md' color='light' onClick={onLoadMoreBtnClick}>
             add
           </StyledLoadMoreBtn>
-        )
+        </>
       }
 
     </StyledWrapper>
@@ -41,6 +43,7 @@ const Posts = ({ list, isFetching, onLoadMoreBtnClick, ...rest }) => {
 Posts.propTypes = {
   list: pt.array.isRequired,
   isFetching: pt.bool.isRequired,
+  errorType: pt.bool,
   onLoadMoreBtnClick: pt.func.isRequired
 }
 
@@ -59,6 +62,10 @@ const StyledList = styled.ul`
   display: flex;
   flex-direction: column;
   row-gap: 15px;
+`
+
+const StyledErrorMessage = styled(ErrorMessage)`
+  text-align: center;
 `
 
 const StyledLoadMoreBtn = styled(IconButton)`

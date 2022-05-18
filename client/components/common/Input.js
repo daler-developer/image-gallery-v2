@@ -1,12 +1,13 @@
 import pt from 'prop-types'
 import styled from 'styled-components'
 
-const Input = ({ size, error, inputProps, ...rest }) => {
+const Input = ({ size, error, inputProps, ref, ...rest }) => {
   return (
     <StyledWrapper {...rest}>
 
       <StyledInput
         size={size}
+        ref={ref}
         {...inputProps}
       />
 

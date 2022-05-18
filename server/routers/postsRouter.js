@@ -5,6 +5,7 @@ const validateRequestMiddleware = require('../middlewares/validateRequestMiddlew
 const populateUserMiddleware = require('../middlewares/populateUserMiddleware')
 
 const getPostsController = require('../controllers/posts/getPostsController')
+const searchPostsController = require('../controllers/posts/searchPostsController')
 const createPostController = require('../controllers/posts/createPostController')
 const likePostController = require('../controllers/posts/likePostController')
 const removeLikeController = require('../controllers/posts/removeLikeController')
@@ -26,6 +27,19 @@ router.get(
     .toInt(),
   validateRequestMiddleware,
   getPostsController
+)
+
+router.get(
+  '/posts/search',
+  populateUserMiddleware,
+  validator.query('query')
+    .trim()
+    .isLength({ min: 1, max: 100 }),
+  validator.query('offset')
+    .optional()
+    .toInt(),
+  validateRequestMiddleware,
+  searchPostsController
 )
 
 router.post(

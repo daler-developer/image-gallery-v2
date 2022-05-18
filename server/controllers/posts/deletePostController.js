@@ -6,7 +6,7 @@ const RequestError = require('../../utils/RequestError')
 const deletePostController = async (req, res, next) => {
   try {
    const currentUser = req.user
-   const postId = new ObjectId(params._id)
+   const postId = new ObjectId(req.params._id)
 
     const post = await collections.posts.findOne({ _id: postId })
 

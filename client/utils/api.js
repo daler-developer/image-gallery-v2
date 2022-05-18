@@ -53,6 +53,10 @@ export const fetchPosts = async ({ offset = 0 } = {}) => {
   return client.get(`/api/posts?offset=${offset}`)
 }
 
+export const searchPosts = async ({ searchQuery }) => {
+  return client.get(`/api/posts/search?query=${searchQuery}`)
+}
+
 export const createPost = async ({ form } = {}) => {
   return client.post(`/api/posts`, form)
 }
@@ -63,6 +67,10 @@ export const likePost = async ({ postId }) => {
 
 export const removeLikeFromPost = async ({ postId }) => {
   return client.patch(`/api/posts/${postId}/remove-like`)
+}
+
+export const deletePost = async ({ postId }) => {
+  return client.delete(`/api/posts/${postId}`)
 }
 
 export const getComments = async ({ postId, offset } = {}) => {

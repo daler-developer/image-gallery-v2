@@ -21,11 +21,11 @@ SearchInput.propTypes = {
 }
 
 const StyledWrapper = styled.div`
-  height: 50px;
+  height: 40px;
   display: flex;
   column-gap: 10px;
-  background-color: rgba(0, 0, 0, 0.1);
-  border-radius: 15px;
+  background-color: rgba(0, 0, 0, 0.06);
+  border-radius: 4px;
   padding: 0 10px;
 `
 

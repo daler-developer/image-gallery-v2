@@ -1,6 +1,7 @@
 const { ObjectId } = require('mongodb')
 const collections = require('../../db/collections')
 const errorTypes = require('../../utils/errorTypes')
+const RequestError = require('../../utils/RequestError')
 
 const getPostsController = async (req, res, next) => {
   try {
@@ -33,7 +34,8 @@ const getPostsController = async (req, res, next) => {
         creator: { $first: '$creators' },
         numLikes: { $size: '$likes' },
         numComments: { $size: '$comments' },
-        likedByCurrentUser: { $in: [currentUser._id, '$likes'] }
+        likedByCurrentUser: { $in: [currentUser._id, '$likes'] },
+        isCreatedByCurrentUser: { $eq: [currentUser._id, '$creatorId'] }
       }
     })
 

@@ -3,7 +3,7 @@ import Image from 'next/image'
 import styled from 'styled-components'
 import emptyAvatar from '../../public/empty-avatar.png'
 
-const Avatar = ({ size, src, ...rest }) => {
+const Avatar = ({ size = 'md', src, ...rest }) => {
   return (
     <StyledWrapper
       $size={size}
@@ -25,10 +25,10 @@ const StyledWrapper = styled.div`
   overflow: hidden;
 
   ${({ $size }) => $size === 'sm' && `
-    width: 40px;
+    width: 20px;
   `}
   ${({ $size }) => $size === 'md' && `
-    width: 60px;
+    width: 40px;
   `}
   ${({ $size }) => $size === 'lg' && `
     width: 80px;

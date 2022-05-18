@@ -1,7 +1,7 @@
 import pt from 'prop-types'
 import styled, { keyframes } from 'styled-components'
 
-const Spinner = ({ size, color = 'blue', ...rest }) => {
+const Spinner = ({ size = 'md', color = 'blue', ...rest }) => {
   return (
     <StyledWrapper
       $size={size}
