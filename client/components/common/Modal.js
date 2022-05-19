@@ -11,11 +11,11 @@ const Modal = ({ children, title, isHidden }) => {
 
   const dispatch = useDispatch()
 
-  // useOnClickOutside(rootRef, () => {
-  //   if (!isHidden) {
-  //     dispatch(uiActions.changedActiveModal(null))
-  //   }
-  // })
+  useOnClickOutside(rootRef, () => {
+    if (!isHidden) {
+      // dispatch(uiActions.changedActiveModal(null))
+    }
+  })
 
   const handlers = {
     closeBtnClick() {

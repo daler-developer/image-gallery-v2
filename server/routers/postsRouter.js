@@ -25,6 +25,9 @@ router.get(
   validator.query('offset')
     .optional()
     .toInt(),
+  validator.query('creatorId')
+    .optional()
+    .trim(),
   validateRequestMiddleware,
   getPostsController
 )

@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { authActions } from '../redux/reducers/authReducer'
+import { authActions, selectCurrentUser } from '../redux/reducers/authReducer'
 
 const useAuth = () => {
   const currentUser = useSelector((state) => selectCurrentUser(state))
@@ -15,9 +15,9 @@ const useAuth = () => {
   }
 
   const logout = () => {
-    dispatch(authActions.setCurrentUser(null))
-    
     localStorage.removeItem('auth-token')
+
+    window.location.reload()
   }
 
   return {

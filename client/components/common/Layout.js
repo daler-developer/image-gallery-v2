@@ -1,7 +1,6 @@
 import pt from 'prop-types'
 import styled from 'styled-components'
 import Header from '../Header'
-import Nav from '../Nav'
 import AuthProtected from './AuthProtected'
 import Container from './Container'
 
@@ -11,8 +10,6 @@ const Layout = ({ children }) => {
       <StyledWrapper>
 
         <Header />
-
-        {/* <Nav /> */}
 
         <Container>
           <StyledBody>

@@ -11,14 +11,22 @@ const getPostsController = async (req, res, next) => {
 
     const pipelines = []
 
-    pipelines.push({
-      $match: {
-        $or: [
-          { creatorId: { $in: currentUser.followings } },
-          { creatorId: currentUser._id }
-        ]
-      }
-    })
+    if (creatorId) {
+      pipelines.push({
+        $match: {
+          creatorId
+        }
+      })
+    } else {
+      pipelines.push({
+        $match: {
+          $or: [
+            { creatorId: { $in: currentUser.followings } },
+            { creatorId: currentUser._id }
+          ]
+        }
+      })
+    }
 
     pipelines.push({
       $lookup: {

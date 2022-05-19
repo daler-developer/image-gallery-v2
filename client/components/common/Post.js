@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { postsActions } from '../../redux/reducers/postsReducer'
 import { uiActions } from '../../redux/reducers/uiReducer'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Avatar from './Avatar'
 import IconButton from './IconButton'
 import CreateCommentForm from './CreateCommentForm'
@@ -13,6 +13,7 @@ import * as api from '../../utils/api'
 import Spinner from './Spinner'
 import useOnClickOutside from '../../hooks/useOnClickOutside'
 import Popup from './Popup'
+import useDebounce from '../../hooks/useDebounce'
 
 const Post = ({ post }) => {
   const [isLikeBtnDisabled, setIsLikeBtnDisabled] = useState(false)
@@ -21,6 +22,14 @@ const Post = ({ post }) => {
   const [isUsersLikedCurrentPostFetching, setIsUsersLikedCurrentPostFetching] = useState(false)
   const [isUsersLikedCurrentPostPanelHidden, setIsUsersLikedCurrentPostPanelHidden] = useState(true)
   const [isPopupHidden, setIsPopupHidden] = useState(true)
+
+  // const debouncedIsUsersLikedCurrentPostPanelHidden = useDebounce(isUsersLikedCurrentPostPanelHidden, 1000)
+
+  // useEffect(() => {
+  //   if (!debouncedIsUsersLikedCurrentPostPanelHidden) {
+  //     alert('show')
+  //   }
+  // }, [debouncedIsUsersLikedCurrentPostPanelHidden])
 
   const dispatch = useDispatch()
 
@@ -61,7 +70,7 @@ const Post = ({ post }) => {
     commentsBtnClick() {
       commentTextInputRef.current?.focus()
     },
-    numLikedMouseEnter() {
+    numLikesClick() {
       if (isUsersLikedCurrentPostPanelHidden) {
         setIsUsersLikedCurrentPostPanelHidden(false)
         loadComments()
@@ -72,7 +81,9 @@ const Post = ({ post }) => {
         setIsPopupHidden(false)
       }
     },
-    loadMoreBtnClick() {
+    loadMoreBtnClick(e) {
+      e.stopPropagation()
+      
       loadComments()
     }
   }
@@ -156,36 +167,35 @@ const Post = ({ post }) => {
 
         </StyledActions>
 
-        <StyledNumLikes onMouseEnter={handlers.numLikedMouseEnter}>
+        <StyledNumLikes onClick={handlers.numLikesClick}>
           Liked by {post.numLikes} people
 
           {
             !isUsersLikedCurrentPostPanelHidden && (
               <StyledUsersPanelLikedCurrentPost ref={usersPanelLikedCurrentPostRef}>
+                <StyledUsersLikedCurrentPost>
+                  {              
+                    usersLikedCurrentPost.map((user) => (
+                      <StyledUserLikedCurrentPost key={user._id}>
+                        {user.username}
+                      </StyledUserLikedCurrentPost>
+                    ))
+                  }
+                </StyledUsersLikedCurrentPost>
+                {
+                  !isUsersLikedCurrentPostFetching && usersLikedCurrentPost.length === 0 && (
+                    <StyledNoCommentsInfo>
+                      No likes
+                    </StyledNoCommentsInfo>
+                  )
+                }
                 {
                   isUsersLikedCurrentPostFetching ? (
                     <StyledSpinner size='sm' color='white' />
                   ) : (
-                    <StyledUsersLikedCurrentPost>
-                      {
-                        usersLikedCurrentPost.length >= 1 ? <>
-                          {
-                            usersLikedCurrentPost.map((user) => (
-                              <StyledUserLikedCurrentPost key={user._id}>
-                                {user.username}
-                              </StyledUserLikedCurrentPost>
-                            ))
-                          }
-                          <StyledLoadMoreCommentsBtn onClick={handlers.loadMoreBtnClick}>
-                            more
-                          </StyledLoadMoreCommentsBtn>
-                        </> : (
-                          <StyledNoCommentsInfo>
-                            no comments
-                          </StyledNoCommentsInfo>
-                        )
-                      }
-                    </StyledUsersLikedCurrentPost>
+                    <StyledLoadMoreCommentsBtn onClick={handlers.loadMoreBtnClick}>
+                      more
+                    </StyledLoadMoreCommentsBtn>
                   )
                 }
               </StyledUsersPanelLikedCurrentPost>
@@ -308,7 +318,7 @@ const StyledUsersPanelLikedCurrentPost = styled.div`
 `
 
 const StyledSpinner = styled(Spinner)`
-
+  margin-top: 10px;
 `
 
 const StyledUsersLikedCurrentPost = styled.ul`
@@ -319,6 +329,7 @@ const StyledUsersLikedCurrentPost = styled.ul`
 
 const StyledUserLikedCurrentPost = styled.li`
   color: white;
+  text-align: center;
 `
 
 const StyledLoadMoreCommentsBtn = styled.button`

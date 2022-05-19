@@ -10,6 +10,7 @@ import Input from './common/Input'
 import IconButton from './common/IconButton'
 import * as yup from 'yup'
 import { postsActions } from '../redux/reducers/postsReducer'
+import ErrorMessage from './common/ErrorMessage'
 
 const AddPostModal = ({}) => {
   const [image, setImage] = useState(null)
@@ -32,32 +33,25 @@ const AddPostModal = ({}) => {
     }),
     async onSubmit(v) {
       try {
-        alert('submit')
         await dispatch(postsActions.created({ image, text: v.text })).unwrap()
-
-        resetAll()
       } catch (e) {
-        setErrorType(e.response.data.errorType)
+        setErrorType(e.errorType)
       } finally {
         form.resetForm()
+        resetImage()
       }
     }
   })
 
   useEffect(() => {
-    form.setErrors({ test: 'Hello' })
-  }, [])
-
-  console.log(form.errors)
-
-  useEffect(() => {
     if (isHidden) {
-      resetAll()
+      resetImage()
+      form.resetForm()
+      setErrorType(null)
     }
   }, [isHidden])
-
-  const resetAll = () => {
-    form.resetForm()
+  
+  const resetImage = () => {
     setImage(null)
     fileInputRef.current && (fileInputRef.current.value = '')
   }
@@ -66,7 +60,8 @@ const AddPostModal = ({}) => {
     imageInputChange(e) {
       setImage(e.target.files[0])
     },
-    removeImageBtnClick() {
+    removeImageBtnClick(e) {
+      e.stopPropagation()
       setImage(null)
       fileInputRef.current && (fileInputRef.current.value = '')
     }
@@ -99,6 +94,10 @@ const AddPostModal = ({}) => {
             </StyledUploadBtn>
           )
         }
+
+        {
+          errorType && <StyledErrorMessage type={errorType} />
+        }
         
         <StyledSubmitBtn color='blue' size='md' type='submit' isLoading={form.isSubmitting}>
           Create
@@ -125,7 +124,6 @@ const StyledImageWrapper = styled.div`
   margin-top: 5px;
   position: relative;
   aspect-ratio: 1 / 1;
-  border: 1px solid black;
   border-radius: 3px;
   overflow: hidden;
 `
@@ -135,6 +133,11 @@ const StyledRemoveImageBtn = styled(IconButton)`
   top: 10px;
   right: 10px;
   z-index: 100;
+`
+
+const StyledErrorMessage = styled(ErrorMessage)`
+  margin-top: 10px;
+  text-align: center;
 `
 
 const StyledSubmitBtn = styled(Button)`

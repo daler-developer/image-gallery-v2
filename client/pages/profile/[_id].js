@@ -7,24 +7,22 @@ import { useRouter } from 'next/router'
 import * as api from '../../utils/api'
 import Spinner from '../../components/common/Spinner'
 import ErrorMessage from '../../components/common/ErrorMessage'
+import Posts from '../../components/common/Posts'
 
 const Profile = () => {
   const [user, setUser] = useState(null)
   const [isFetching, setIsFetching] = useState(true)
-  const [errorType, setErrorType] = useState(null)
+  const [posts, setPosts] = useState([])
+  const [isFetchingPosts, setIsFetchingPosts] = useState(false)
 
   const router = useRouter()
 
   useEffect(() => {
     loadUser()
+    loadPosts()
   }, [])
 
   const loadUser = async () => {
-    try {
-      
-    } catch (e) {
-      
-    }
     setIsFetching(true)
 
     const { data } = await api.getUser({ _id: router.query._id })
@@ -33,14 +31,26 @@ const Profile = () => {
     setIsFetching(false)
   }
 
+  const loadPosts = async () => {
+    setIsFetchingPosts(true)
+    const { data } = await api.fetchPosts({ offset: posts.length, creatorId: router.query._id })
+
+    setPosts([...posts, ...data.posts])
+    setIsFetchingPosts(false)
+  }
+
+  const handlers = {
+    loadMorePostsBtnClick() {
+      loadPosts()
+    }
+  }
+
   return (
     <StyledWrapper>
       
       {
         isFetching ? (
           <Spinner />
-        ) : errorType ? (
-          <ErrorMessage type={errorType} />
         ) : <>
           <StyledBasicInfo>
             <StyledAvatar />
@@ -49,10 +59,14 @@ const Profile = () => {
             <StyledNumFollowers>{user.numFollowers}</StyledNumFollowers>
             <StyledNumPosts>{user.numPosts}</StyledNumPosts>
           </StyledBasicInfo>
-
-          
         </>
       }
+
+      <StyledPosts
+        list={posts}
+        isFetching={isFetchingPosts}
+        onLoadMoreBtnClick={handlers.loadMorePostsBtnClick}
+      />
 
     </StyledWrapper>
   )
@@ -71,6 +85,7 @@ const StyledWrapper = styled.div`
 `
 
 const StyledBasicInfo = styled.div`
+  padding-top: 20px;
   display: grid;
   grid-template-areas
     'avatar username      username     username'
@@ -106,8 +121,9 @@ const StyledNumPosts = styled.span`
   grid-area: numPosts;
 `
 
-const Styled = styled.div`
-  
+const StyledPosts = styled(Posts)`
+  margin: 50px auto 0;
+  max-width: 500px;
 `
 
 export default Profile

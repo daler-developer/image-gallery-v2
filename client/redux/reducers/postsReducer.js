@@ -30,8 +30,6 @@ const created = createAsyncThunk('posts/created', async ({ image, text }, thunkA
 
     const { data } = await api.createPost({ form })
 
-    console.log(data)
-
     return data
   } catch (e) {
     return thunkAPI.rejectWithValue({ errorType: e.response.data.errorType })
@@ -51,8 +49,6 @@ const commentCreated = createAsyncThunk('posts/comment-created', async ({ postId
 const commentsFetched = createAsyncThunk('posts/comments-fetched', async ({ postId }) => {
   try {
     const { data } = await api.getComments({ postId })
-
-    console.log(data)
 
     return { postId, comments: data.comments }
   } catch (e) {

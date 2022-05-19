@@ -37,7 +37,7 @@ Button.propTypes = {
 
 const StyledWrapper = styled.button`
   padding: 3px 5px;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
 
@@ -48,7 +48,7 @@ const StyledWrapper = styled.button`
   ${({ $size }) => $size === 'sm' && `
     height: 30px;
     padding: 3px 3px;
-    font-size: 12px;
+    font-size: 14px;
   `}
   ${({ $size }) => $size === 'md' && `
     height: 40px;

@@ -1,9 +1,10 @@
 import styled from 'styled-components'
+import Spinner from './Spinner'
 
 const FullScreenLoader = () => {
   return (
     <StyledWrapper>
-      Loading...
+      <Spinner color='black' size='lg' />
     </StyledWrapper>
   )
 }

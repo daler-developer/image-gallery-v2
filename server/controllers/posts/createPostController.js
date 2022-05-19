@@ -3,7 +3,7 @@ const errorTypes = require('../../utils/errorTypes')
 const { generatePostImageFileUrl } = require('../../utils/helpers')
 const RequestError = require('../../utils/RequestError')
 
-const createPostController = async (req, res) => {
+const createPostController = async (req, res, next) => {
   try {
     const file = req.file
     const currentUser = req.user
@@ -49,8 +49,7 @@ const createPostController = async (req, res) => {
 
     return res.status(200).json({ post: postCreated })
   } catch (e) {
-    console.log(e)
-    return res.status(500).json({ type: errorTypes.COMMON_SERVER_ERROR })
+    return next(e)
   }
 }
 

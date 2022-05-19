@@ -7,6 +7,7 @@ import AuthProtected from './common/AuthProtected'
 import UpdateProfileModal from './UpdateProfileModal'
 import CommentsModal from './CommentsModal'
 import AddPostModal from './AddPostModal'
+import Snackbar from './Snackbar'
 
 const AppWrapper = ({ children }) => {
   const isLoadingCurrentUser = useSelector((state) => selectIsLoadingCurrentUser(state))
@@ -26,9 +27,10 @@ const AppWrapper = ({ children }) => {
   return <>
     {children}
     <AuthProtected>
-      <AddPostModal />
       {/* <UpdateProfileModal /> */}
+      <AddPostModal />
       <CommentsModal />
+      <Snackbar />
     </AuthProtected>
   </>
 }

@@ -16,18 +16,9 @@ const decodeAuthToken = (token) => {
   return jwt.decode(token, process.env.JWT_SECRET)
 }
 
-const compareObjectIds = (a, b) => {
-  if (a.toString() === b.toString()) {
-    return true
-  }
-
-  return false
-}
-
 module.exports = {
   generateAvatarFileUrl,
   generatePostImageFileUrl,
   generateAuthToken,
   decodeAuthToken,
-  compareObjectIds
 }

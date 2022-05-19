@@ -66,7 +66,7 @@ const CommentsModal = ({}) => {
           {
             comments.length ? comments.map((comment) => (
               <Comment key={comment._id} comment={comment} onCommentDeleted={handlers.commentDeleted} />
-            )) : (
+            )) : !isFetching && (
               <StyledNoCommentsText>
                 No comments
               </StyledNoCommentsText>

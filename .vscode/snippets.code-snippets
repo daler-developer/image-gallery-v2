@@ -14,7 +14,7 @@
 	"import": {
 		"prefix": "imp",
 		"body": [
-			"import { $1 } from '$0'"
+			"import { $0 } from '$1'"
 		]
 	},
 	"log": {

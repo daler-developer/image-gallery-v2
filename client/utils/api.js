@@ -49,8 +49,18 @@ export const updateProfile = async ({ _id, form } = {}) => {
   return client.patch(`/api/users/${_id}`, form)
 }
 
-export const fetchPosts = async ({ offset = 0 } = {}) => {
-  return client.get(`/api/posts?offset=${offset}`)
+export const fetchPosts = async ({ offset = 0, creatorId } = {}) => {
+  const searchParams = new URLSearchParams({})
+
+  if (offset !== undefined) {
+    searchParams.append('offset', offset)
+  }
+
+  if (creatorId) {
+    searchParams.append('creatorId', creatorId)
+  }
+
+  return client.get(`/api/posts?${searchParams.toString()}`)
 }
 
 export const searchPosts = async ({ searchQuery }) => {

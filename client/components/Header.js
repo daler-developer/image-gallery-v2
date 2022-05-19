@@ -7,15 +7,31 @@ import logo from '../public/logo.jpg'
 import IconButton from './common/IconButton'
 import { useDispatch } from 'react-redux'
 import { uiActions } from '../redux/reducers/uiReducer'
+import Popup from './common/Popup'
+import { useState } from 'react'
+import { useRouter } from 'next/router'
+import useAuth from '../hooks/useAuth'
 
 const Header = ({}) => {
-  const currentUser = useCurrentUser()
+  const [isPopupHidden, setIsPopupHidden] = useState(true)
+
+  const { currentUser, logout } = useAuth()
+
+  const router = useRouter()
 
   const dispatch = useDispatch()
 
   const handlers = {
     addPostBtnClick() {
       dispatch(uiActions.changedActiveModal('add-post'))
+    },
+    logoutBtnClick() {
+      logout()
+    },
+    viewProfileBtnClick() {
+      setIsPopupHidden(true)
+
+      router.push(`/profile/${currentUser._id}`)
     }
   }
 
@@ -48,12 +64,21 @@ const Header = ({}) => {
               add
             </IconButton>
             
-            <Link href={`/profile/${currentUser._id}`} passHref>
+            <StyledAvatarWrapper>
               <StyledAvatar
                 src={currentUser.avatarUrl}
                 size='md'
+                onClick={() => setIsPopupHidden(false)}
               />
-            </Link>
+              <StyledPopup
+                isHidden={isPopupHidden}
+                onClose={() => setIsPopupHidden(true)}
+                btns={[
+                  { text: 'Logout', onClick: handlers.logoutBtnClick },
+                  { text: 'Profile', onClick: handlers.viewProfileBtnClick }
+                ]}
+              />
+            </StyledAvatarWrapper>
 
           </StyledNav>
 
@@ -81,15 +106,25 @@ const StyledBody = styled.div`
   padding: 3px 0;
 `
 
+const StyledLogo = styled.img`
+  aspect-ratio: 1 / 1;
+  height: 100%;
+`
+
 const StyledNav = styled.nav`
   display: flex;
   align-items: center;
   column-gap: 4px;
 `
 
-const StyledLogo = styled.img`
-  aspect-ratio: 1 / 1;
-  height: 100%;
+const StyledAvatarWrapper = styled.div`
+  position: relative;
+`
+
+const StyledPopup = styled(Popup)`
+  position: absolute;
+  top: 100%;
+  right: 0;
 `
 
 const StyledAvatar = styled(Avatar)`

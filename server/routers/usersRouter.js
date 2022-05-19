@@ -1,4 +1,5 @@
 const express = require('express')
+const validator = require('express-validator')
 
 const getUsersController= require('../controllers/users/getUsersController')
 const getUserController = require('../controllers/users/getUserController')
@@ -8,9 +9,10 @@ const updateProfileController = require('../controllers/users/updateProfileContr
 const getCurrentUserController = require('../controllers/users/getCurrentUserController')
 const followUserController = require('../controllers/users/followUserController')
 const unfollowUserController = require('../controllers/users/unfollowUserController')
+const getUserFollowersController = require("../controllers/users/getUserFollowersController")
+const getUserFollowingsController = require("../controllers/users/getUserFollowingsController")
 
 const populateUserMiddleware = require('../middlewares/populateUserMiddleware')
-const validator = require('express-validator')
 const { avatarsUpload } = require('../utils/uploads')
 const validateRequestMiddleware = require('../middlewares/validateRequestMiddleware')
 
@@ -91,6 +93,26 @@ router.patch(
     .toLowerCase(),
   validateRequestMiddleware,
   updateProfileController
+)
+
+router.get(
+  '/users/:_id/followers',
+  populateUserMiddleware,
+  validator.query('offset')
+    .optional()
+    .toInt(),
+  validateRequestMiddleware,
+  getUserFollowersController
+)
+
+router.get(
+  '/users/:_id/followings',
+  populateUserMiddleware,
+  validator.query('offset')
+    .optional()
+    .toInt(),
+  validateRequestMiddleware,
+  getUserFollowingsController
 )
 
 router.patch(
