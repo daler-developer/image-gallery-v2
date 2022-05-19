@@ -62,7 +62,7 @@ const StyledCommentTextInput = styled(Input)`
 `
 
 const StyledLeaveCommentBtn = styled(Button)`
-  flex: 0 0 auto;
+  flex: 0 0 100px;
   height: initial;
 `
 

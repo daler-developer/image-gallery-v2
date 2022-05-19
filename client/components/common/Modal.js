@@ -4,17 +4,24 @@ import styled from 'styled-components'
 import { useDispatch } from 'react-redux'
 import useOnClickOutside from '../../hooks/useOnClickOutside'
 import { uiActions } from '../../redux/reducers//uiReducer'
+import IconButton from './IconButton'
 
 const Modal = ({ children, title, isHidden }) => {
   const rootRef = useRef(null)
 
   const dispatch = useDispatch()
 
-  useOnClickOutside(rootRef, () => {
-    if (!isHidden) {
+  // useOnClickOutside(rootRef, () => {
+  //   if (!isHidden) {
+  //     dispatch(uiActions.changedActiveModal(null))
+  //   }
+  // })
+
+  const handlers = {
+    closeBtnClick() {
       dispatch(uiActions.changedActiveModal(null))
     }
-  })
+  }
 
   if (isHidden) {
     return null
@@ -25,7 +32,12 @@ const Modal = ({ children, title, isHidden }) => {
       <StyledModal ref={rootRef}>
 
         <StyledHeader>
-          {title}
+          <StyledTitle>
+            {title}
+          </StyledTitle>
+          <StyledCloseBtn size='sm' onClick={handlers.closeBtnClick}>
+            close
+          </StyledCloseBtn>
         </StyledHeader>
 
         <StyledBody>
@@ -63,14 +75,25 @@ const StyledModal = styled.div`
   width: 100%;
 `
 
-const StyledBody = styled.div`
-
+const StyledHeader = styled.div`
+  padding: 10px;
+  border-bottom: 2px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `
 
-const StyledHeader = styled.div`
-  text-align: start;
-  padding: 10px;
-  border-bottom: 1px solid grey;
+const StyledTitle = styled.span`
+  font-weight: 600;
+  font-size: 18px;
+`
+
+const StyledCloseBtn = styled(IconButton)`
+  
+`
+
+const StyledBody = styled.div`
+
 `
 
 export default Modal

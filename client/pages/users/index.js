@@ -25,20 +25,20 @@ const Users = ({}) => {
 
   useEffect(() => {
     if (status === 'idle') {
-      dispatch(usersActions.fetched())
+      dispatch(usersActions.fetchedUsers())
     }
   }, [])
 
   const handlers = {
     loadMoreBtnClick() {
-      dispatch(usersActions.fetched({ offset: users.length }))
+      dispatch(usersActions.fetchedUsers({ offset: users.length }))
     }
   }
 
   return (
     <StyledWrapper>
 
-      <SearchInput
+      <StyledSearchInput
         inputProps={{
           placeholder: 'Search',
           value: searchInputValue,
@@ -86,6 +86,10 @@ const StyledWrapper = styled.div`
   display: flex;
   flex-direction: column;
   row-gap: 20px;
+`
+
+const StyledSearchInput = styled(SearchInput)`
+  margin-top: 20px;
 `
 
 const StyledUserCards = styled.ul`

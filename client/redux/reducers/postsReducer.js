@@ -60,6 +60,16 @@ const commentsFetched = createAsyncThunk('posts/comments-fetched', async ({ post
   }
 })
 
+const commentDeleted = createAsyncThunk('posts/comment-deleted', async ({ postId, commentId }, thunkAPI) => {
+  try {
+    await api.deleteComment({ postId, commentId })
+
+    return { postId, commentId }
+  } catch (e) {
+    return thunkAPI.rejectWithValue({ errorType: e.response.data.errorType })
+  }
+})
+
 const postLiked = createAsyncThunk('posts/post-liked', async ({ postId }) => {
   try {
     await api.likePost({ postId })
@@ -117,13 +127,11 @@ const postsSlice = createSlice({
         state.feed.errorType = null
       })
       .addCase(fetchedFeedPosts.rejected, (state, { payload }) => {
-        console.log(payload)
         state.feed.status = 'error'
         state.feed.errorType = payload.errorType
       })
 
       .addCase(created.fulfilled, (state, { payload }) => {
-        state.feed.list.push(payload.post)
       })
 
       .addCase(commentCreated.fulfilled, (state, { payload }) => {
@@ -131,6 +139,15 @@ const postsSlice = createSlice({
 
         if (post) {
           post.numComments++
+        }
+      })
+
+
+      .addCase(commentDeleted.fulfilled, (state, { payload }) => {
+        const post = state.feed.list.find((post) => post._id === payload.postId)
+
+        if (post) {
+          post.numComments--
         }
       })
 
@@ -182,7 +199,8 @@ export const postsActions = {
   commentCreated,
   commentsFetched,
   postDeleted,
-  searchedFeedPosts
+  searchedFeedPosts,
+  commentDeleted
 }
 
 export default postsSlice.reducer

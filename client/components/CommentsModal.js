@@ -3,13 +3,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import styled from 'styled-components'
 import { selectActiveModal, selectIdOfPostViewingComments, uiActions } from '../redux/reducers/uiReducer'
 import Modal from './common/Modal'
-import { useFormik } from 'formik'
-import Input from './common/Input'
-import Button from './common/Button'
 import Comment from './common/Comment'
 import * as api from '../utils/api'
 import Spinner from './common/Spinner'
 import CreateCommentForm from './common/CreateCommentForm'
+import IconButton from './common/IconButton'
+import ErrorMessage from './common/ErrorMessage'
 
 const CommentsModal = ({}) => {
   const [comments, setComments] = useState([])
@@ -37,9 +36,9 @@ const CommentsModal = ({}) => {
       setIsFetching(true)
       setErrorType(null)
   
-      const { data } = await api.getComments({ postId: idOfPostViewingComments, offset: 0 })
+      const { data } = await api.getComments({ postId: idOfPostViewingComments, offset: comments.length })
   
-      setComments(data.comments)
+      setComments([...comments, ...data.comments])
     } catch (e) {
       setErrorType(e.response.data.errorType)
     } finally {
@@ -50,6 +49,12 @@ const CommentsModal = ({}) => {
   const handlers = {
     newCommentCreated(comment) {
       setComments([...comments, comment])
+    },
+    commentDeleted(commentId) {
+      setComments(comments.filter((comment) => comment._id !== commentId))
+    },
+    loadMoreBtnClick() {
+      loadComments()
     }
   }
 
@@ -59,23 +64,28 @@ const CommentsModal = ({}) => {
 
         <StyledList>
           {
+            comments.length ? comments.map((comment) => (
+              <Comment key={comment._id} comment={comment} onCommentDeleted={handlers.commentDeleted} />
+            )) : (
+              <StyledNoCommentsText>
+                No comments
+              </StyledNoCommentsText>
+            )
+          }
+          {
             isFetching ? (
               <StyledSpinner size='md' />
-            ) : errorType ? (
-              <span>{errorType}</span>
-            ) : comments.length === 0 ? (
-              <StyledNoCommentsText>
-                No comments yet:(
-              </StyledNoCommentsText>
-            ) : (      
-              comments.map((comment) => (
-                <Comment key={comment._id} comment={comment} />
-              ))  
-            )
+            ) : <>
+              <StyledErrorMessage type={errorType} />
+              <StyledLoadMoreBtn type='button' onClick={handlers.loadMoreBtnClick}>
+                add
+              </StyledLoadMoreBtn>
+            </>
           }
         </StyledList>
 
-        <CreateCommentForm postId={idOfPostViewingComments} onNewCommentCreated={handlers.newCommentCreated} />
+
+        <StyledCreateCommentForm postId={idOfPostViewingComments} onNewCommentCreated={handlers.newCommentCreated} />
 
       </StyledWrapper>      
     </Modal>
@@ -90,7 +100,6 @@ const StyledWrapper = styled.div`
 `
 
 const StyledList = styled.ul`
-  flex: 1 0 0;
   padding: 10px;
   display: flex;
   flex-direction: column;
@@ -98,26 +107,27 @@ const StyledList = styled.ul`
   overflow-y: auto;
 `
 
+const StyledLoadMoreBtn = styled(IconButton)`
+  flex: 0 0 auto;
+  align-self: center;
+`
+
+const StyledCreateCommentForm = styled(CreateCommentForm)`
+  margin-top: auto;
+`
+
 const StyledSpinner = styled(Spinner)`
+  flex: 0 0 auto;
+  align-self: center;
+`
+
+const StyledErrorMessage = styled(ErrorMessage)`
   align-self: center;
 `
 
 const StyledNoCommentsText = styled.span`
   align-self: center;
-`
-
-const StyledForm = styled.form`
-  flex: 0 0 40px;
-  display: flex;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-`
-
-const StyledSubmitBtn = styled(Button)`
-  flex: 0 0 auto;
-`
-
-const StyledInput = styled(Input)`
-  flex: 1 0 0;
+  font-weight: 600;
 `
 
 export default CommentsModal

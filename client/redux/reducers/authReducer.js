@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import * as api from '../../utils/api'
 
-const login = createAsyncThunk('auth/login', async ({ username, password }, thunkAPI) => {
+const loggedin = createAsyncThunk('auth/login', async ({ username, password }, thunkAPI) => {
   try {
     const { data } = await api.login({ username, password })
     
@@ -13,7 +13,7 @@ const login = createAsyncThunk('auth/login', async ({ username, password }, thun
   }
 })
 
-const register = createAsyncThunk('auth/register', async ({ username, password }, thunkAPI) => {
+const registered = createAsyncThunk('auth/register', async ({ username, password }, thunkAPI) => {
   try {
     const { data } = await api.register({ username, password })
 
@@ -25,7 +25,7 @@ const register = createAsyncThunk('auth/register', async ({ username, password }
   }
 })
 
-const fetchCurrentUser = createAsyncThunk('auth/get-current-user', async (_, thunkAPI) => {
+const fetchedCurrentUser = createAsyncThunk('auth/get-current-user', async (_, thunkAPI) => {
   try {
     const { data } = await api.getCurrentUser()
 
@@ -76,19 +76,19 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
 
-      .addCase(login.fulfilled, (state, { payload }) => {
+      .addCase(loggedin.fulfilled, (state, { payload }) => {
         state.currentUser = payload.user
       })
 
-      .addCase(register.fulfilled, (state, { payload }) => {
+      .addCase(registered.fulfilled, (state, { payload }) => {
         state.currentUser = payload.user
       })
 
-      .addCase(fetchCurrentUser.pending, (state, { payload }) => {
+      .addCase(fetchedCurrentUser.pending, (state, { payload }) => {
         state.isLoadingCurrentUser = true
         state.currentUser = null
       })
-      .addCase(fetchCurrentUser.fulfilled, (state, { payload }) => {
+      .addCase(fetchedCurrentUser.fulfilled, (state, { payload }) => {
         state.isLoadingCurrentUser = false
         state.currentUser = payload.user
       })
@@ -109,9 +109,9 @@ export const selectIsLoadingCurrentUser = (state) => {
 
 export const authActions = {
   ...authSlice.actions,
-  login,
-  register,
-  fetchCurrentUser,
+  loggedin,
+  registered,
+  fetchedCurrentUser,
   profileUpdated
 }
 

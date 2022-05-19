@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import * as api from '../../utils/api'
 
-const fetched = createAsyncThunk('users/fetch', async ({ offset } = {}, thunkAPI) => {
+const fetchedUsers = createAsyncThunk('users/fetch', async ({ offset } = {}, thunkAPI) => {
   try {
     const { data } = await api.getUsers({ offset })
 
@@ -45,16 +45,16 @@ const usersSlice = createSlice({
   },
   extraReducers(builder) {
     builder
-      .addCase(fetched.pending, (state, { paylaod }) => {
+      .addCase(fetchedUsers.pending, (state, { paylaod }) => {
         state.status = 'fetching'
         state.errorType = null
       })
-      .addCase(fetched.fulfilled, (state, { payload }) => {
+      .addCase(fetchedUsers.fulfilled, (state, { payload }) => {
         state.list = state.list.concat(payload.users)
         state.status = 'success'
         state.errorType = null
       })
-      .addCase(fetched.rejected, (state, { paylaod }) => {
+      .addCase(fetchedUsers.rejected, (state, { paylaod }) => {
         state.status = 'error'
         state.errorType = paylaod.errorType
       })
@@ -77,7 +77,7 @@ const usersSlice = createSlice({
 
 export const usersActions = {
   ...usersSlice.actions,
-  fetched,
+  fetchedUsers,
   followedUser,
   unfollowedUser
 }

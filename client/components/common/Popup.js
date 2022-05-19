@@ -3,7 +3,7 @@ import { useRef } from 'react'
 import styled from 'styled-components'
 import useOnClickOutside from '../../hooks/useOnClickOutside'
 
-const Popup = ({ children, isHidden, onClose, btns, ...rest }) => {
+const Popup = ({ isHidden, onClose, btns, ...rest }) => {
 
   const rootRef = useRef(null)
 
@@ -17,7 +17,7 @@ const Popup = ({ children, isHidden, onClose, btns, ...rest }) => {
     <StyledWrapper ref={rootRef} {...rest}>
       {
         btns.map((btn) => (
-          <StyledBtn type='button' onClick={btn.onClick}>
+          <StyledBtn key={btn.text} type='button' onClick={btn.onClick}>
             {btn.text}
           </StyledBtn>
         ))
@@ -27,7 +27,6 @@ const Popup = ({ children, isHidden, onClose, btns, ...rest }) => {
 }
 
 Popup.propTypes = {
-  children: pt.any.isRequired,
   isHidden: pt.bool.isRequired,
   onClose: pt.func.isRequired,
   btns: pt.array.isRequired

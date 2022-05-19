@@ -74,6 +74,9 @@ router.delete(
 
 router.get(
   '/posts/:postId/comments',
+  validator.query('offset')
+    .trim()
+    .toInt(),
   populateUserMiddleware,
   getCommentsController
 )
@@ -88,7 +91,7 @@ router.post(
 )
 
 router.delete(
-  '/posts/:postId',
+  '/posts/:postId/comments/:commentId',
   populateUserMiddleware,
   deleteCommentController
 )

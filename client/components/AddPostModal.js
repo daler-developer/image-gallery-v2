@@ -32,6 +32,7 @@ const AddPostModal = ({}) => {
     }),
     async onSubmit(v) {
       try {
+        alert('submit')
         await dispatch(postsActions.created({ image, text: v.text })).unwrap()
 
         resetAll()
@@ -42,6 +43,12 @@ const AddPostModal = ({}) => {
       }
     }
   })
+
+  useEffect(() => {
+    form.setErrors({ test: 'Hello' })
+  }, [])
+
+  console.log(form.errors)
 
   useEffect(() => {
     if (isHidden) {
@@ -71,6 +78,7 @@ const AddPostModal = ({}) => {
         
         <Input
           size='md'
+          error={form.touched.text && form.errors.text}
           inputProps={{
             placeholder: 'Text',
             ...form.getFieldProps('text')
@@ -81,7 +89,7 @@ const AddPostModal = ({}) => {
           image ? (
             <StyledImageWrapper>
               <Image layout='fill' src={imageUrl} />
-              <StyledRemoveImageBtn size='md' color='red' onClick={handlers.removeImageBtnClick}>
+              <StyledRemoveImageBtn type='button' size='md' color='red' onClick={handlers.removeImageBtnClick}>
                 close
               </StyledRemoveImageBtn>
             </StyledImageWrapper>

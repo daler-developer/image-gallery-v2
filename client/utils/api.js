@@ -73,10 +73,20 @@ export const deletePost = async ({ postId }) => {
   return client.delete(`/api/posts/${postId}`)
 }
 
-export const getComments = async ({ postId, offset } = {}) => {
-  return client.get(`/api/posts/${postId}/comments${offset ? `&offset=${offset}` : ''}`)
+export const getComments = async ({ postId, offset }) => {
+  const searchParams = new URLSearchParams()
+
+  if (offset !== undefined) {
+    searchParams.append('offset', offset)
+  }
+
+  return client.get(`/api/posts/${postId}/comments?${searchParams.toString()}`)
 }
 
 export const createComment = async ({ postId, text }) => {
   return client.post(`/api/posts/${postId}/comments`, { text })
+}
+
+export const deleteComment = async ({ postId, commentId }) => {
+  return client.delete(`/api/posts/${postId}/comments/${commentId}`)
 }

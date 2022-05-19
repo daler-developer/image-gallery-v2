@@ -5,8 +5,6 @@ import Spinner from './Spinner'
 
 const Button = ({ children, size = 'md', color = 'blue', isLoading = false, roundedBorder = true, ...rest }) => {
 
-  const spinnerSize = useMemo(() => size, [size])
-
   const spinnerColor = useMemo(() => {
     switch (color) {
       case 'red':
@@ -21,7 +19,7 @@ const Button = ({ children, size = 'md', color = 'blue', isLoading = false, roun
     <StyledWrapper disabled={isLoading} $roundedBorder={roundedBorder} $color={color} $size={size} {...rest}>
       {
         isLoading ? (
-          <Spinner size={spinnerSize} color={spinnerColor} />
+          <StyledSpinner color={spinnerColor} />
         ) : (
           children
         )
@@ -48,15 +46,18 @@ const StyledWrapper = styled.button`
   }
 
   ${({ $size }) => $size === 'sm' && `
-    padding: 3px 10px;
+    height: 30px;
+    padding: 3px 3px;
     font-size: 12px;
   `}
   ${({ $size }) => $size === 'md' && `
-    padding: 6px 15px;
+    height: 40px;
+    padding: 5px 7px;
     font-size: 15px;
   `}
   ${({ $size }) => $size === 'lg' && `
-    padding: 8px 20px;
+    height: 40px;
+    padding: 7px 10px;
     font-size: 18px;
   `}
 
@@ -76,6 +77,11 @@ const StyledWrapper = styled.button`
   ${({ $roundedBorder }) => $roundedBorder && `
     border-radius: 3px;
   `}
+`
+
+const StyledSpinner = styled(Spinner)`
+  width: auto;
+  height: 100%;  
 `
 
 export default Button

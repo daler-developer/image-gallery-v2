@@ -40,9 +40,9 @@ const Auth = () => {
     async onSubmit({ username, password }) {
       try {
         if (tab === 'login') {
-          await dispatch(authActions.login({ username, password })).unwrap()
+          await dispatch(authActions.loggedin({ username, password })).unwrap()
         } else if (tab === 'register') {
-          await dispatch(authActions.register({ username, password })).unwrap()
+          await dispatch(authActions.registered({ username, password })).unwrap()
         }
       } catch (e) {
         setErrorType(e.errorType)

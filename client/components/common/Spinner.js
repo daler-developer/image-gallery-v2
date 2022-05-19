@@ -35,10 +35,10 @@ const StyledWrapper = styled.div`
     width: 20px;
   `}
   ${({ $size }) => $size === 'md' && `
-    width: 30px;
+    width: 40px;
   `}
   ${({ $size }) => $size === 'lg' && `
-    width: 40px;
+    width: 50px;
   `}
 
   ${({ $color }) => $color === 'black' && `
