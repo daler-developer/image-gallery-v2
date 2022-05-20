@@ -37,37 +37,35 @@ const UserCard = ({ user }) => {
         size='md'
       />
 
-      <StyledUsername>
-        {user.username}
-      </StyledUsername>
+      <Link href={`/profile/${user._id}`} passHref>
+        <StyledUsername>
+          {user.username}
+        </StyledUsername>
+      </Link>
 
       {
-        user.currentUserFollows ? (
-          <StyledUnfollowBtn
-            onClick={handlers.unfollowBtnClick}
-            size='md'
-            color='grey'
-            isLoading={isUnfollowLoading}
-          >
-            unfollow
-          </StyledUnfollowBtn>
-        ) : (
-          <StyledFollowBtn
-            onClick={handlers.followBtnClick}
-            size='md'
-            color='blue'
-            isLoading={isFollowLoading}
-          >
-            follow
-          </StyledFollowBtn>
+        !user.isCurrentUser && (
+          user.currentUserFollows ? (
+            <StyledUnfollowBtn
+              onClick={handlers.unfollowBtnClick}
+              size='md'
+              color='grey'
+              isLoading={isUnfollowLoading}
+            >
+              UNFOLLOW
+            </StyledUnfollowBtn>
+          ) : (
+            <StyledFollowBtn
+              onClick={handlers.followBtnClick}
+              size='md'
+              color='blue'
+              isLoading={isFollowLoading}
+            >
+              FOLLOW
+            </StyledFollowBtn>
+          )
         )
       }
-
-      <Link href={`/profile/${user._id}`} passHref>
-        <StyledViewProfileLink type='button' color='grey' size='md'>
-          view profile
-        </StyledViewProfileLink>
-      </Link>
 
     </StyledWrapper>
   )
@@ -83,11 +81,10 @@ UserCard.propTypes = {
 
 const StyledWrapper = styled.div`
   display: flex;
-  flex-direction: column;
   align-items: center;
   padding: 10px;
   border-radius: 4px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.4);
 `
 
 const StyledAvatar = styled(Avatar)`
@@ -95,23 +92,23 @@ const StyledAvatar = styled(Avatar)`
 `
 
 const StyledUsername = styled.span`
-  margin-top: 5px;
+  margin-left: 10px;
   font-weight: 500;
-  font-size: 18px;
-`
+  font-size: 22px;
+  cursor: pointer;
 
-const StyledViewProfileLink = styled(Button)`
-  margin-top: 2px;
-  align-self: stretch;
+  &:hover {
+    text-decoration: underline;
+  }
 `
 
 const StyledFollowBtn = styled(Button)`
-  margin-top: 30px;
+  margin-left: auto;
   align-self: stretch;
 `
 
 const StyledUnfollowBtn = styled(Button)`
-  margin-top: 30px;
+  margin-left: auto;
   align-self: stretch;
 `
 

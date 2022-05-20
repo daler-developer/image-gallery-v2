@@ -13,7 +13,6 @@ import * as api from '../../utils/api'
 import Spinner from './Spinner'
 import useOnClickOutside from '../../hooks/useOnClickOutside'
 import Popup from './Popup'
-import useDebounce from '../../hooks/useDebounce'
 
 const Post = ({ post }) => {
   const [isLikeBtnDisabled, setIsLikeBtnDisabled] = useState(false)
@@ -22,14 +21,6 @@ const Post = ({ post }) => {
   const [isUsersLikedCurrentPostFetching, setIsUsersLikedCurrentPostFetching] = useState(false)
   const [isUsersLikedCurrentPostPanelHidden, setIsUsersLikedCurrentPostPanelHidden] = useState(true)
   const [isPopupHidden, setIsPopupHidden] = useState(true)
-
-  // const debouncedIsUsersLikedCurrentPostPanelHidden = useDebounce(isUsersLikedCurrentPostPanelHidden, 1000)
-
-  // useEffect(() => {
-  //   if (!debouncedIsUsersLikedCurrentPostPanelHidden) {
-  //     alert('show')
-  //   }
-  // }, [debouncedIsUsersLikedCurrentPostPanelHidden])
 
   const dispatch = useDispatch()
 
@@ -209,7 +200,7 @@ const Post = ({ post }) => {
 
       </StyledBody>
 
-      <CreateCommentForm postId={post._id} />
+      <CreateCommentForm postId={post._id} ref={commentTextInputRef} />
 
     </StyledWrapper>
 
@@ -322,7 +313,7 @@ const StyledSpinner = styled(Spinner)`
 `
 
 const StyledUsersLikedCurrentPost = styled.ul`
-  dispaly: flex;
+  display: flex;
   flex-direction: column;
   align-items: center;
 `

@@ -28,7 +28,7 @@ const Home = () => {
 
   const handlers = {
     imageInputChange(e) {
-      dispatch(postsActions.created({ image: e.target.files[0] }))
+      dispatch(postsActions.postCreated({ image: e.target.files[0] }))
     },
     loadMoreBtnClick() {
       dispatch(postsActions.fetchedFeedPosts({ offset: posts.length }))

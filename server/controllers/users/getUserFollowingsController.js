@@ -28,7 +28,7 @@ const getUserFollowingsController = async (req, res, next) => {
       }
     ]).toArray()
 
-    return res.json({ followings })
+    return res.status(202).json({ followings })
   } catch (e) {
     return next(e)
   }

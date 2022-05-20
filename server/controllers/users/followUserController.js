@@ -14,6 +14,10 @@ const followUserController = async (req, res, next) => {
       throw new RequestError(404, errorTypes.USERS_USER_DOES_NOT_EXIST)
     }
 
+    if (userFollowing._id.equals(currentUser._id)) {
+      throw new RequestError(400, errorTypes.USERS_CANNOT_FOLLOW_ONESELF)
+    }
+
     // check if current user is already following this user
     if (currentUser.followings.find((_id) => _id.equals(userId))) {
       throw new RequestError(400, errorTypes.USERS_ALREADY_FOLLOWING_USER)

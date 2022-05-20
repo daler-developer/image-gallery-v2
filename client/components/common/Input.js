@@ -1,7 +1,8 @@
 import pt from 'prop-types'
+import { forwardRef } from 'react'
 import styled from 'styled-components'
 
-const Input = ({ size, error, inputProps, ref, ...rest }) => {
+const Input = forwardRef(({ size, error, inputProps, ...rest }, ref) => {
   return (
     <StyledWrapper {...rest}>
 
@@ -21,7 +22,7 @@ const Input = ({ size, error, inputProps, ref, ...rest }) => {
 
     </StyledWrapper>
   )
-}
+})
 
 Input.defaultProps = {
   size: 'md',

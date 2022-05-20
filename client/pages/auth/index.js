@@ -22,7 +22,7 @@ const Auth = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.push('/home')
+      router.push(router.query.next || '/home')
     }
   }, [isAuthenticated])
 

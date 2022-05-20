@@ -10,7 +10,8 @@ const AuthProtected = ({ children }) => {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      router.push('/auth?tab=login')
+      router.push(`/auth?tab=login`)
+      // router.push(`/auth?tab=login&next=${encodeURIComponent(router.asPath)}`)
     }
   }, [isAuthenticated])
 

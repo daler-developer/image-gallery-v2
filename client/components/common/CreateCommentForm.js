@@ -6,11 +6,9 @@ import Input from './Input'
 import * as yup from 'yup'
 import { postsActions } from '../../redux/reducers/postsReducer'
 import { useDispatch } from 'react-redux'
-import { useRef } from 'react'
+import { forwardRef, useRef } from 'react'
 
-const CreateCommentForm = ({ postId, onNewCommentCreated, ...rest }) => {
-  const inputRef = useRef(null)
-
+const CreateCommentForm = forwardRef(({ postId, onNewCommentCreated, ...rest }, ref) => {
   const dispatch = useDispatch()
 
   const form = useFormik({
@@ -40,14 +38,14 @@ const CreateCommentForm = ({ postId, onNewCommentCreated, ...rest }) => {
           placeholder: 'Text',
           ...form.getFieldProps('text')
         }}
-        ref={inputRef}
+        ref={ref}
       />
       <StyledLeaveCommentBtn type='submit' isLoading={form.isSubmitting} roundedBorder={false}>
         Create
       </StyledLeaveCommentBtn>
     </StyledWrapper>
   )
-}
+})
 
 CreateCommentForm.propTypes = {
   onNewCommentCreated: pt.func

@@ -3,7 +3,7 @@ import * as api from '../../utils/api'
 
 const fetchedFeedPosts = createAsyncThunk('posts/fetched-feed-posts', async ({ offset } = {}, thunkAPI) => {
   try {
-    const { data } = await api.fetchPosts({ offset })
+    const { data } = await api.getPosts({ offset })
 
     return data
   } catch (e) {
@@ -21,8 +21,9 @@ const searchedFeedPosts = createAsyncThunk('posts/searched-feed-posts', async ({
   }
 })
 
-const created = createAsyncThunk('posts/created', async ({ image, text }, thunkAPI) => {
+const postCreated = createAsyncThunk('posts/post-created', async ({ image, text }, thunkAPI) => {
   try {
+    
     const form = new FormData()
 
     form.append('image', image, image.filename)
@@ -101,7 +102,8 @@ const initialState = {
     list: [],
     status: 'idle',
     errorType: null
-  }
+  },
+  
 }
 
 const postsSlice = createSlice({
@@ -127,7 +129,7 @@ const postsSlice = createSlice({
         state.feed.errorType = payload.errorType
       })
 
-      .addCase(created.fulfilled, (state, { payload }) => {
+      .addCase(postCreated.fulfilled, (state, { payload }) => {
       })
 
       .addCase(commentCreated.fulfilled, (state, { payload }) => {
@@ -189,7 +191,7 @@ export const selectFeedPostsErrorType = (state) => {
 export const postsActions = {
   ...postsSlice.actions,
   fetchedFeedPosts,
-  created,
+  postCreated,
   postLiked,
   postLikeRemoved,
   commentCreated,

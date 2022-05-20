@@ -14,6 +14,10 @@ const unfollowUserController = async (req, res, next) => {
       throw new RequestError(404, errorTypes.USERS_USER_DOES_NOT_EXIST)
     }
 
+    if (userUnfollowing._id.equals(currentUser._id)) {
+      throw new RequestError(400, errorTypes.USERS_CANNOT_UNFOLLOW_ONESELF)
+    }
+
     // check if user is not yet following this user
     if (!currentUser.followings.find((_id) => _id.equals(userId))) {
       throw new RequestError(500, errorTypes.USERS_NOT_FOLLOWING_USER_YET)

@@ -6,8 +6,6 @@ import Spinner from './Spinner'
 import ErrorMessage from './ErrorMessage'
 
 const Posts = ({ list, isFetching, errorType = null, onLoadMoreBtnClick, ...rest }) => {
-  console.log(list)
-  
   return (
     <StyledWrapper {...rest}>
 

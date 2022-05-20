@@ -9,6 +9,7 @@ import { selectUsers, selectUsersErrorType, selectUsersFetchingStatus, usersActi
 import Button from '../../components/common/Button'
 import IconButton from '../../components/common/IconButton'
 import SearchInput from '../../components/common/SearchInput'
+import UserCards from '../../components/common/UserCards'
 
 const Users = ({}) => {
   const [searchInputValue, setSearchInputValue] = useState('')
@@ -32,7 +33,7 @@ const Users = ({}) => {
   const handlers = {
     loadMoreBtnClick() {
       dispatch(usersActions.fetchedUsers({ offset: users.length }))
-    }
+    },
   }
 
   return (
@@ -46,28 +47,11 @@ const Users = ({}) => {
         }}
       />
 
-      <StyledUserCards>
-        {
-          filteredUsers.map((user) => (
-            <UserCard
-              key={user._id}
-              user={user}
-            />
-          ))
-        }
-      </StyledUserCards>
-
-      {
-        status === 'fetching' ? (
-          <StyledSpinner size='md' />
-        ) : status === 'error' ? (
-          <ErrorMessage type={errorType} />
-        ) : status === 'success' && (
-          <StyledLoadMoreBtn size='md' onClick={handlers.loadMoreBtnClick}>
-            add
-          </StyledLoadMoreBtn>
-        )
-      }
+      <StyledUserCards
+        list={filteredUsers}
+        isFetching={status === 'fetching'}
+        onLoadMoreBtnClick={handlers.loadMoreBtnClick}
+      />
 
     </StyledWrapper>
   )
@@ -85,25 +69,14 @@ Users.getLayout = (page) => {
 const StyledWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  row-gap: 20px;
 `
 
 const StyledSearchInput = styled(SearchInput)`
   margin-top: 20px;
 `
 
-const StyledUserCards = styled.ul`
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 20px;
-`
-
-const StyledSpinner = styled(Spinner)`
-  align-self: center;
-`
-
-const StyledLoadMoreBtn = styled(IconButton)`
-  align-self: center;
+const StyledUserCards = styled(UserCards)`
+  margin-top: 20px;
 `
 
 export default Users

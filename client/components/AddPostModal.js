@@ -33,7 +33,7 @@ const AddPostModal = ({}) => {
     }),
     async onSubmit(v) {
       try {
-        await dispatch(postsActions.created({ image, text: v.text })).unwrap()
+        await dispatch(postsActions.postCreated({ image, text: v.text })).unwrap()
       } catch (e) {
         setErrorType(e.errorType)
       } finally {

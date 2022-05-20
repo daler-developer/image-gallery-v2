@@ -28,7 +28,7 @@ const uiSlice = createSlice({
   },
   extraReducers(builder) {
     builder
-      .addCase(postsActions.created.fulfilled, (state) => {
+      .addCase(postsActions.postCreated.fulfilled, (state) => {
         state.snackbarMessages.push({ type: 'success', text: 'New post create' })
       })
   }

@@ -47,19 +47,23 @@ const Comment = ({ comment, onCommentDeleted }) => {
         {comment.text}
       </StyledText>
 
-      <StyledPopupWrapper>
-        <StyledOptionsBtn size='md' color='light' onClick={handlers.openPopupBtnClick}>
-          more_vert
-        </StyledOptionsBtn>
-        <StyledPopup
-          isHidden={isPopupHidden}
-          onClose={() => setIsPopupHidden(true)}
-          btns={[
-            { text: 'Delete', onClick: handlers.deleteCommentBtnClick },
-            { text: 'Edit', onClick: handlers.editCommentBtnClick }
-          ]}
-        />
-      </StyledPopupWrapper>
+      {
+        comment.isCreatedByCurrentUser && (
+          <StyledPopupWrapper>
+            <StyledOptionsBtn size='md' color='light' onClick={handlers.openPopupBtnClick}>
+              more_vert
+            </StyledOptionsBtn>
+            <StyledPopup
+              isHidden={isPopupHidden}
+              onClose={() => setIsPopupHidden(true)}
+              btns={[
+                { text: 'Delete', onClick: handlers.deleteCommentBtnClick },
+                { text: 'Edit', onClick: handlers.editCommentBtnClick }
+              ]}
+            />
+          </StyledPopupWrapper>
+        )
+      }
 
     </StyledWrapper>
   )

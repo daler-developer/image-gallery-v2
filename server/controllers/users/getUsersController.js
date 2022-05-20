@@ -5,49 +5,42 @@ const errorTypes = require('../../utils/errorTypes')
 const getUsersController = async (req, res, next) => {
   try {
     const currentUser = req.user
-    const { offset = 0, excludeCurrent = true } = req.query
+    const { offset = 0 } = req.query
     const postLikedId = req.query.postLikedId ? new ObjectId(req.query.postLikedId) : null
-    const currentUserId = new ObjectId(currentUser._id)
 
     let pipelines = []
 
-    let $match = {
-      $and: []
-    }
-
-    if (excludeCurrent) {
-      $match.$and.push({
-        _id: {
-          $ne: currentUserId
-        }
-      })
-    }
-
     if (postLikedId) {
       const post = await collections.posts.findOne({ _id: postLikedId })
-
-      $match.$and.push({
-        _id: {
-          $in: post.likes
+    
+      pipelines.push({
+        $match: {
+          _id: {
+            $in: post.likes
+          }
         }
       })
     }
 
     pipelines = pipelines.concat([
       {
-        $match
-      },
-      {
         $skip: offset
       },
       {
         $set: {
           numFollowings: { $size: '$followings' },
-          currentUserFollows: { $in: ['$_id', currentUser.followings] }
+          isCurrentUser: { $eq: [currentUser._id, '$_id'] },
+          currentUserFollows: {
+            $cond: {
+              if: { $eq: [currentUser._id, '$_id'] },
+              then: null,
+              else: { $in: ['$_id', currentUser.followings] }
+            }
+          }
         }
       },
       {
-        $limit: 10
+        $limit: 2
       },
       {
         $unset: ['followings']

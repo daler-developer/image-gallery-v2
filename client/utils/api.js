@@ -12,23 +12,16 @@ export const getCurrentUser = async () => {
   return client.get('/api/users/current')
 }
 
-export const getUsers = async ({ offset, excludeCurrent, postLikedId } = {}) => {
-  const data = {}
+export const getUsers = async ({ offset, postLikedId } = {}) => {
+  const searchParams = new URLSearchParams({})
 
   if (offset !== undefined) {
-    data.offset = offset
-  }
-  if (excludeCurrent === true) {
-    data.excludeCurrent = 'yes'
-  } 
-  if (excludeCurrent === false) {
-    data.excludeCurrent = 'no'
-  }
-  if (postLikedId) {
-    data.postLikedId = postLikedId
+    searchParams.append('offset', offset)
   }
 
-  const searchParams = new URLSearchParams(data)
+  if (postLikedId !== undefined) {
+    searchParams.append('postLikedId', postLikedId)
+  } 
   
   return client.get(`/api/users?${searchParams.toString()}`)
 }
@@ -49,7 +42,7 @@ export const updateProfile = async ({ _id, form } = {}) => {
   return client.patch(`/api/users/${_id}`, form)
 }
 
-export const fetchPosts = async ({ offset = 0, creatorId } = {}) => {
+export const getPosts = async ({ offset = 0, creatorId } = {}) => {
   const searchParams = new URLSearchParams({})
 
   if (offset !== undefined) {
@@ -99,4 +92,24 @@ export const createComment = async ({ postId, text }) => {
 
 export const deleteComment = async ({ postId, commentId }) => {
   return client.delete(`/api/posts/${postId}/comments/${commentId}`)
+}
+
+export const getFollowers = async ({ userId, offset }) => {
+  const searchParams = new URLSearchParams()
+
+  if (offset !== undefined) {
+    searchParams.append('offset', offset)
+  }
+
+  return client.get(`/api/users/${userId}/followers?${searchParams}`)
+}
+
+export const getFollowings = async ({ userId, offset }) => {
+  const searchParams = new URLSearchParams()
+
+  if (offset !== undefined) {
+    searchParams.append('offset', offset)
+  }
+
+  return client.get(`/api/users/${userId}/followings?${searchParams.toString()}`)
 }

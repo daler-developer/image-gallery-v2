@@ -8,6 +8,7 @@ const getCommentsController = async (req, res, next) => {
     const params = req.params
     const postId = new ObjectId(params.postId)
     const offset = req.query.offset || 0
+    const currentUser = req.user
 
     const post = await collections.posts.findOne({ _id: postId })
 
@@ -31,7 +32,8 @@ const getCommentsController = async (req, res, next) => {
       },
       {
         $set: {
-          creator: { $first: '$creators' }
+          creator: { $first: '$creators' },
+          isCreatedByCurrentUser: { $eq: [currentUser._id, '$creatorId'] }
         }
       },
       {
