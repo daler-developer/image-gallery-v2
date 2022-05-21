@@ -1,9 +1,19 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import * as api from '../../utils/api'
 
-const fetchedUsers = createAsyncThunk('users/fetch', async ({ offset } = {}, thunkAPI) => {
+const fetchedUsers = createAsyncThunk('users/fetched', async ({ offset } = {}, thunkAPI) => {
   try {
     const { data } = await api.getUsers({ offset })
+
+    return data
+  } catch (e) {
+    return thunkAPI.rejectWithValue({ errorType: e.response.data.errorType })
+  }
+})
+
+const fetchedUsersWhoLikedPost = createAsyncThunk('users/fetched-users-who-liked-post', async ({ postId, offset }, thunkAPI) => {
+  try {
+    const { data } = await api.getUsers({ postLikedId: postId, offset })
 
     return data
   } catch (e) {
@@ -78,6 +88,7 @@ const usersSlice = createSlice({
 export const usersActions = {
   ...usersSlice.actions,
   fetchedUsers,
+  fetchedUsersWhoLikedPost,
   followedUser,
   unfollowedUser
 }

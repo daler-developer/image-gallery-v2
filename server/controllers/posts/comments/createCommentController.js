@@ -8,6 +8,7 @@ const createCommentController = async (req, res, next) => {
     const { text } = req.body
     const postId = new ObjectId(req.params.postId)
     const creatorId = new ObjectId(req.user._id)
+    const currentUser = req.user
 
     const post = await collections.posts.findOne({ _id: postId })
 
@@ -35,7 +36,8 @@ const createCommentController = async (req, res, next) => {
       },
       {
         $set: {
-          creator: { $first: '$creators' }
+          creator: { $first: '$creators' },
+          isCreatedByCurrentUser: { $eq: [currentUser._id, '$creatorId'] }
         }
       },
       {

@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
 import Layout from '../../components/common/Layout'
 import { useEffect, useRef, useState } from 'react'
-import { postsActions, selectFeedPosts, selectFeedPostsErrorType, selectFeedPostsFetchingStatus } from '../../redux/reducers/postsReducer'
+import { postsActions, selectFeedPosts, } from '../../redux/reducers/postsReducer'
 import Posts from '../../components/common/Posts'
 import SearchInput from '../../components/common/SearchInput'
 import useDebounce from '../../hooks/useDebounce'
@@ -16,14 +16,12 @@ const Home = () => {
 
   const imageInputRef = useRef(null)
 
-  const posts = useSelector((state) => selectFeedPosts(state))
-  const status = useSelector((state) => selectFeedPostsFetchingStatus(state))
-  const errorType = useSelector((state) => selectFeedPostsErrorType(state))
+  const { list: posts, errorType, isFetching } = useSelector((state) => selectFeedPosts(state))
 
   useEffect(() => {
-    if (status === 'idle') {
+    if (!posts.length) {
       dispatch(postsActions.fetchedFeedPosts({ offset: posts.length }))
-    }
+    }  
   }, [])
 
   const handlers = {
@@ -48,7 +46,7 @@ const Home = () => {
 
       <StyledPosts
         list={posts} 
-        isFetching={status === 'fetching'}
+        isFetching={isFetching}
         errorType={errorType} 
         onLoadMoreBtnClick={handlers.loadMoreBtnClick} 
       />

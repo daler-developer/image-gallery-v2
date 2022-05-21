@@ -11,7 +11,17 @@ const fetchedFeedPosts = createAsyncThunk('posts/fetched-feed-posts', async ({ o
   }
 })
 
-const searchedFeedPosts = createAsyncThunk('posts/searched-feed-posts', async ({ searchQuery }) => {
+const fetchedProfilePosts = createAsyncThunk('posts/fetched-profile-posts', async ({ creatorId, offset }, thunkAPI) => {
+  try {
+    const { data } = await api.getPosts({ creatorId, offset })
+
+    return data
+  } catch (e) {
+    return thunkAPI.rejectWithValue({ errorType: e.response.data.errorType })
+  }
+})
+
+const searchedFeedPosts = createAsyncThunk('posts/searched-feed-posts', async ({ searchQuery }, thunkAPI) => {
   try {
     const { data } = await api.searchPosts({ searchQuery })
 
@@ -23,7 +33,6 @@ const searchedFeedPosts = createAsyncThunk('posts/searched-feed-posts', async ({
 
 const postCreated = createAsyncThunk('posts/post-created', async ({ image, text }, thunkAPI) => {
   try {
-    
     const form = new FormData()
 
     form.append('image', image, image.filename)
@@ -37,7 +46,7 @@ const postCreated = createAsyncThunk('posts/post-created', async ({ image, text 
   }
 })
 
-const commentCreated = createAsyncThunk('posts/comment-created', async ({ postId, text }) => {
+const commentCreated = createAsyncThunk('posts/comment-created', async ({ postId, text }, thunkAPI) => {
   try {
     const { data } = await api.createComment({ postId, text })
 
@@ -47,7 +56,7 @@ const commentCreated = createAsyncThunk('posts/comment-created', async ({ postId
   }
 })
 
-const commentsFetched = createAsyncThunk('posts/comments-fetched', async ({ postId }) => {
+const commentsFetched = createAsyncThunk('posts/comments-fetched', async ({ postId }, thunkAPI) => {
   try {
     const { data } = await api.getComments({ postId })
 
@@ -67,7 +76,17 @@ const commentDeleted = createAsyncThunk('posts/comment-deleted', async ({ postId
   }
 })
 
-const postLiked = createAsyncThunk('posts/post-liked', async ({ postId }) => {
+const commentUpdated = createAsyncThunk('posts/post-updated', async ({ commentId, text }, thunkAPI) => {
+  try {
+    const { data } = await api.updateComment({ commentId, text })
+
+    return { comment: data.comment }
+  } catch (e) {
+    return thunkAPI.rejectWithValue({ errorType: e.response.data.errorType })
+  }
+})
+
+const postLiked = createAsyncThunk('posts/post-liked', async ({ postId }, thunkAPI) => {
   try {
     await api.likePost({ postId })
 
@@ -77,7 +96,7 @@ const postLiked = createAsyncThunk('posts/post-liked', async ({ postId }) => {
   }
 })
 
-const postLikeRemoved = createAsyncThunk('posts/post-like-removed', async ({ postId }) => {
+const postLikeRemoved = createAsyncThunk('posts/post-like-removed', async ({ postId }, thunkAPI) => {
   try {
     await api.removeLikeFromPost({ postId })
 
@@ -87,7 +106,7 @@ const postLikeRemoved = createAsyncThunk('posts/post-like-removed', async ({ pos
   }
 })
 
-const postDeleted = createAsyncThunk('posts/post-deleted', async ({ postId }) => {
+const postDeleted = createAsyncThunk('posts/post-deleted', async ({ postId }, thunkAPI) => {
   try {
     await api.deletePost({ postId })
 
@@ -100,10 +119,14 @@ const postDeleted = createAsyncThunk('posts/post-deleted', async ({ postId }) =>
 const initialState = {
   feed: {
     list: [],
-    status: 'idle',
+    isFetching: false,
     errorType: null
   },
-  
+  profile: {
+    list: [],
+    isFetching: false,
+    errorType: null
+  }
 }
 
 const postsSlice = createSlice({
@@ -116,54 +139,83 @@ const postsSlice = createSlice({
     builder
 
       .addCase(fetchedFeedPosts.pending, (state, { payload }) => {
-        state.feed.status = 'fetching'
+        state.feed.isFetching = true
         state.feed.errorType = null
       })
       .addCase(fetchedFeedPosts.fulfilled, (state, { payload }) => {
         state.feed.list = state.feed.list.concat(payload.posts)
-        state.feed.status = 'success'
+        state.feed.isFetching = false
         state.feed.errorType = null
       })
       .addCase(fetchedFeedPosts.rejected, (state, { payload }) => {
-        state.feed.status = 'error'
+        state.feed.isFetching = false
         state.feed.errorType = payload.errorType
       })
 
-      .addCase(postCreated.fulfilled, (state, { payload }) => {
+      .addCase(fetchedProfilePosts.pending, (state, { payload }) => {
+        state.profile.isFetching = true
+        state.profile.errorType = null
+      })
+      .addCase(fetchedProfilePosts.fulfilled, (state, { payload }) => {
+        state.profile.list = state.profile.list.concat(payload.posts)
+        state.profile.isFetching = false
+        state.profile.errorType = null
+      })
+      .addCase(fetchedProfilePosts.rejected, (state, { payload }) => {
+        state.profile.isFetching = false
+        state.profile.errorType = payload.errorType
       })
 
       .addCase(commentCreated.fulfilled, (state, { payload }) => {
-        const post = [...state.feed.list].find((post) => post._id === payload.postId)
+        const feedPost = state.feed.list.find((post) => post._id === payload.postId)
+        const profilePost = state.profile.list.find((post) => post._id === payload.postId)
 
-        if (post) {
-          post.numComments++
+        if (feedPost) {
+          feedPost.numComments++
+        }
+        if (profilePost) {
+          profilePost.numComments++
         }
       })
 
 
       .addCase(commentDeleted.fulfilled, (state, { payload }) => {
-        const post = state.feed.list.find((post) => post._id === payload.postId)
+        const feedPost = state.feed.list.find((post) => post._id === payload.postId)
+        const profilePost = state.profile.list.find((post) => post._id === payload.postId)
 
-        if (post) {
-          post.numComments--
+        if (feedPost) {
+          feedPost.numComments--
+        }
+        if (profilePost) {
+          profilePost.numComments--
         }
       })
 
       .addCase(postLiked.fulfilled, (state, { payload }) => {
-        const post = state.feed.list.find((post) => post._id === payload.postId)
+        const feedPost = state.feed.list.find((post) => post._id === payload.postId)
+        const profilePost = state.profile.list.find((post) => post._id === payload.postId)
 
-        if (post) {
-          post.numLikes++
-          post.likedByCurrentUser = true
+        if (feedPost) {
+          feedPost.numLikes++
+          feedPost.likedByCurrentUser = true
+        }
+        if (profilePost) {
+          profilePost.numLikes++
+          profilePost.likedByCurrentUser = true
         }
       })
 
       .addCase(postLikeRemoved.fulfilled, (state, { payload }) => {
         const post = state.feed.list.find((post) => post._id === payload.postId)
+        const profilePost = state.profile.list.find((post) => post._id === payload.postId)
 
         if (post) {
           post.numLikes--
           post.likedByCurrentUser = false
+        }
+        if (profilePost) {
+          profilePost.numLikes--
+          profilePost.likedByCurrentUser = false
         }
       })
 
@@ -177,20 +229,17 @@ const postsSlice = createSlice({
 })
 
 export const selectFeedPosts = (state) => {
-  return state.posts.feed.list
+  return state.posts.feed
 }
 
-export const selectFeedPostsFetchingStatus = (state) => {
-  return state.posts.feed.status
-}
-
-export const selectFeedPostsErrorType = (state) => {
-  return state.posts.feed.errorType
+export const selectProfilePosts = (state) => {
+  return state.posts.profile
 }
 
 export const postsActions = {
   ...postsSlice.actions,
   fetchedFeedPosts,
+  fetchedProfilePosts,
   postCreated,
   postLiked,
   postLikeRemoved,
@@ -198,7 +247,8 @@ export const postsActions = {
   commentsFetched,
   postDeleted,
   searchedFeedPosts,
-  commentDeleted
+  commentDeleted,
+  commentUpdated
 }
 
 export default postsSlice.reducer

@@ -12,7 +12,7 @@ const Snackbar = () => {
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      dispatch(uiActions.removedAllSnackbarMessages())
+      // dispatch(uiActions.removedAllSnackbarMessages())
     }, 2000)
 
     return () => clearTimeout(timeout)

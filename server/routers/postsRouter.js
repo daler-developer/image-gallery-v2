@@ -14,6 +14,7 @@ const deletePostController = require('../controllers/posts/deletePostController'
 const getCommentsController = require('../controllers/posts/comments/getCommentsController')
 const createCommentController = require('../controllers/posts/comments/createCommentController')
 const deleteCommentController = require('../controllers/posts/comments/deleteCommentController')
+const updateCommentController = require('../controllers/posts/comments/updateCommentController')
 
 const { postsImagesUpload } = require('../utils/uploads')
 
@@ -89,7 +90,7 @@ router.post(
   populateUserMiddleware,
   validator.body('text')
     .trim()
-    .notEmpty(),
+    .isLength({ min: 1, max: 20 }),
   createCommentController
 )
 
@@ -97,6 +98,16 @@ router.delete(
   '/posts/:postId/comments/:commentId',
   populateUserMiddleware,
   deleteCommentController
+)
+
+router.patch(
+  '/comments/:_id',
+  populateUserMiddleware,
+  validator.body('text')
+    .trim()
+    .isLength({ min: 1, max: 20 }),
+  validateRequestMiddleware,
+  updateCommentController
 )
 
 module.exports = router

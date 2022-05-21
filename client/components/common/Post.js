@@ -5,14 +5,14 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { postsActions } from '../../redux/reducers/postsReducer'
 import { uiActions } from '../../redux/reducers/uiReducer'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import Avatar from './Avatar'
 import IconButton from './IconButton'
 import CreateCommentForm from './CreateCommentForm'
-import * as api from '../../utils/api'
 import Spinner from './Spinner'
 import useOnClickOutside from '../../hooks/useOnClickOutside'
 import Popup from './Popup'
+import { usersActions } from '../../redux/reducers/usersReducer'
 
 const Post = ({ post }) => {
   const [isLikeBtnDisabled, setIsLikeBtnDisabled] = useState(false)
@@ -64,7 +64,7 @@ const Post = ({ post }) => {
     numLikesClick() {
       if (isUsersLikedCurrentPostPanelHidden) {
         setIsUsersLikedCurrentPostPanelHidden(false)
-        loadComments()
+        loadUsersWhoLikedCurrentPost()
       }
     },
     openPopupBtnClick() {
@@ -75,19 +75,17 @@ const Post = ({ post }) => {
     loadMoreBtnClick(e) {
       e.stopPropagation()
       
-      loadComments()
+      loadUsersWhoLikedCurrentPost()
     }
   }
 
-  const loadComments = async () => {
+  const loadUsersWhoLikedCurrentPost = async () => {
     try {
       setIsUsersLikedCurrentPostFetching(true)
 
-      const { data } = await api.getUsers({ postLikedId: post._id, offset: usersLikedCurrentPost.length, excludeCurrent: false })
+      const { users } = await dispatch(usersActions.fetchedUsersWhoLikedPost({ postId: post._id, offset: usersLikedCurrentPost.length })).unwrap()
 
-      setUsersLikedCurrentPost([...usersLikedCurrentPost, ...data.users])
-    } catch (e) {
-      console.log(e)
+      setUsersLikedCurrentPost([...usersLikedCurrentPost, ...users])
     } finally {
       setIsUsersLikedCurrentPostFetching(false)
     }
@@ -164,20 +162,24 @@ const Post = ({ post }) => {
           {
             !isUsersLikedCurrentPostPanelHidden && (
               <StyledUsersPanelLikedCurrentPost ref={usersPanelLikedCurrentPostRef}>
-                <StyledUsersLikedCurrentPost>
-                  {              
-                    usersLikedCurrentPost.map((user) => (
-                      <StyledUserLikedCurrentPost key={user._id}>
-                        {user.username}
-                      </StyledUserLikedCurrentPost>
-                    ))
-                  }
-                </StyledUsersLikedCurrentPost>
+                {
+                  usersLikedCurrentPost.length !== 0 && (
+                    <StyledUsersLikedCurrentPost>
+                      {              
+                        usersLikedCurrentPost.map((user) => (
+                          <StyledUserLikedCurrentPost key={user._id}>
+                            {user.username}
+                          </StyledUserLikedCurrentPost>
+                        ))
+                      }
+                    </StyledUsersLikedCurrentPost>
+                  )
+                }
                 {
                   !isUsersLikedCurrentPostFetching && usersLikedCurrentPost.length === 0 && (
-                    <StyledNoCommentsInfo>
+                    <StyledNoLikesInfo>
                       No likes
-                    </StyledNoCommentsInfo>
+                    </StyledNoLikesInfo>
                   )
                 }
                 {
@@ -209,7 +211,7 @@ const Post = ({ post }) => {
 }
 
 Post.propTypes = {
-  post: pt.object.isRequired
+  post: pt.object.isRequired,
 }
 
 const StyledWrapper = styled.li`
@@ -306,10 +308,12 @@ const StyledUsersPanelLikedCurrentPost = styled.div`
   font-size: 13px;
   min-width: 150px;
   padding: 5px;
+  row-gap: 5px;
+  z-index: 200;
 `
 
 const StyledSpinner = styled(Spinner)`
-  margin-top: 10px;
+
 `
 
 const StyledUsersLikedCurrentPost = styled.ul`
@@ -324,7 +328,6 @@ const StyledUserLikedCurrentPost = styled.li`
 `
 
 const StyledLoadMoreCommentsBtn = styled.button`
-  margin-top: 10px;
   background-color: transparent;
 
   &:hover {
@@ -332,7 +335,7 @@ const StyledLoadMoreCommentsBtn = styled.button`
   }
 `
 
-const StyledNoCommentsInfo = styled.div`
+const StyledNoLikesInfo = styled.div`
   
 `
 

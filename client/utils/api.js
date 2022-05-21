@@ -94,6 +94,10 @@ export const deleteComment = async ({ postId, commentId }) => {
   return client.delete(`/api/posts/${postId}/comments/${commentId}`)
 }
 
+export const updateComment = async ({ commentId, text }) => {
+  return client.patch(`/api/comments/${commentId}`, { text })
+}
+
 export const getFollowers = async ({ userId, offset }) => {
   const searchParams = new URLSearchParams()
 

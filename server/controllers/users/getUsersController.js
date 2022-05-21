@@ -1,6 +1,7 @@
 const { ObjectId } = require("mongodb")
 const collections = require("../../db/collections")
 const errorTypes = require('../../utils/errorTypes')
+const RequestError = require('../../utils/RequestError')
 
 const getUsersController = async (req, res, next) => {
   try {
@@ -9,6 +10,8 @@ const getUsersController = async (req, res, next) => {
     const postLikedId = req.query.postLikedId ? new ObjectId(req.query.postLikedId) : null
 
     let pipelines = []
+
+    // throw new RequestError(404, errorTypes.USERS_CANNOT_FOLLOW_ONESELF)
 
     if (postLikedId) {
       const post = await collections.posts.findOne({ _id: postLikedId })

@@ -16,7 +16,7 @@ const CreateCommentForm = forwardRef(({ postId, onNewCommentCreated, ...rest }, 
       text: ''
     },
     validationSchema: yup.object({
-      text: yup.string().trim().required().min(1).max(15)
+      text: yup.string().trim().required().min(1).max(20)
     }),
     async onSubmit(v) {
       try {

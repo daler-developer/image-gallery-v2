@@ -37,7 +37,6 @@ const CommentsModal = ({}) => {
       setErrorType(null)
   
       const { data } = await api.getComments({ postId: idOfPostViewingComments, offset: comments.length })
-  
       setComments([...comments, ...data.comments])
     } catch (e) {
       setErrorType(e.response.data.errorType)
@@ -55,6 +54,9 @@ const CommentsModal = ({}) => {
     },
     loadMoreBtnClick() {
       loadComments()
+    },
+    updatedComment(commentId, newComment) {
+      setComments(comments.map((comment) => comment._id === commentId ? newComment : comment))
     }
   }
 
@@ -65,7 +67,12 @@ const CommentsModal = ({}) => {
         <StyledList>
           {
             comments.length ? comments.map((comment) => (
-              <Comment key={comment._id} comment={comment} onCommentDeleted={handlers.commentDeleted} />
+              <Comment
+                key={comment._id}
+                comment={comment}
+                onCommentDeleted={handlers.commentDeleted}
+                onUpdatedComment={handlers.updatedComment}
+              />
             )) : !isFetching && (
               <StyledNoCommentsText>
                 No comments
@@ -76,7 +83,9 @@ const CommentsModal = ({}) => {
             isFetching ? (
               <StyledSpinner size='md' />
             ) : <>
-              <StyledErrorMessage type={errorType} />
+              {
+                errorType && <StyledErrorMessage type={errorType} />
+              }
               <StyledLoadMoreBtn type='button' onClick={handlers.loadMoreBtnClick}>
                 add
               </StyledLoadMoreBtn>

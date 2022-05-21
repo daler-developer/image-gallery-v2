@@ -1,5 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { postsActions } from '../reducers/postsReducer'
+import { usersActions } from '../reducers/usersReducer'
+import generateErrorMessage from '../../utils/generateErrorMessage'
 
 const initialState = {
   activeModal: null,
@@ -30,6 +32,15 @@ const uiSlice = createSlice({
     builder
       .addCase(postsActions.postCreated.fulfilled, (state) => {
         state.snackbarMessages.push({ type: 'success', text: 'New post create' })
+      })
+      .addCase(usersActions.fetchedUsersWhoLikedPost.rejected, (state, { payload }) => {
+        state.snackbarMessages.push({ type: 'error', text: generateErrorMessage(payload.errorType) })
+      })
+      .addCase(postsActions.commentUpdated.rejected, (state, { payload }) => {
+        state.snackbarMessages.push({ type: 'error', text: generateErrorMessage(payload.errorType) })
+      })
+      .addCase(postsActions.postLiked.rejected, (state, { payload }) => {
+        state.snackbarMessages.push({ type: 'error', text: generateErrorMessage(payload.errorType) })
       })
   }
 })

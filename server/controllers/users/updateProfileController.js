@@ -29,7 +29,7 @@ const updateProfileController = async (req, res, next) => {
 
     if (password) {
       updatedFields.password = password
-    }
+    } 
 
     if (removeAvatar) {
       await collections.users.updateOne({ _id: userId }, { $unset: { avatarUrl: '' } })
@@ -40,7 +40,7 @@ const updateProfileController = async (req, res, next) => {
     await collections.users.updateOne({ _id: userId }, { $set: updatedFields })
 
     const user = await collections.users.findOne({ _id: userId })
-
+ 
     return res.json({ user })
   } catch (e) {
     return next(e)

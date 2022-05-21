@@ -10,13 +10,12 @@ import ErrorMessage from '../../components/common/ErrorMessage'
 import Posts from '../../components/common/Posts'
 import Link from 'next/link'
 import UserCards from '../../components/common/UserCards'
+import { postsActions, selectProfilePosts } from '../../redux/reducers/postsReducer'
+import { useDispatch, useSelector } from 'react-redux'
 
 const Profile = () => {
   const [user, setUser] = useState(null)
   const [isFetching, setIsFetching] = useState(true)
-
-  const [posts, setPosts] = useState([])
-  const [isFetchingPosts, setIsFetchingPosts] = useState(false)
 
   const [followers, setFollowers] = useState({
     list: [],
@@ -30,6 +29,10 @@ const Profile = () => {
     errorType: null
   })
 
+  const dispatch = useDispatch()
+
+  const { list: posts, errorType: postsErrorType, isFetching: isFetchingPosts } = useSelector((state) => selectProfilePosts(state))
+
   const router = useRouter()
 
   const tab = router.query.tab
@@ -42,19 +45,11 @@ const Profile = () => {
     }
   }, [])
 
-  // useEffect(() => {
-    // if (tab === 'posts') {
-    //   loadPosts()
-    // } else if (tab === 'followers') {
-    //   loadFollowers()
-    // } else if (tab === 'followings') {
-    //   loadFollowings()
-    // }
-  // }, [tab])
-
   useEffect(() => {
+    if (posts.length === 0) {
+      loadPosts()
+    }
     loadUser()
-    loadPosts()
     loadFollowers()
     loadFollowings()
   }, [])
@@ -69,11 +64,7 @@ const Profile = () => {
   }
 
   const loadPosts = async () => {
-    setIsFetchingPosts(true)
-    const { data } = await api.getPosts({ offset: posts.length, creatorId: router.query._id })
-
-    setPosts([...posts, ...data.posts])
-    setIsFetchingPosts(false)
+    dispatch(postsActions.fetchedProfilePosts({ creatorId: router.query._id, offset: posts.length }))
   }
 
   const loadFollowers = async () => {
@@ -101,9 +92,7 @@ const Profile = () => {
       loadFollowings()
     }
   }
-
-  console.log(followings)
-
+  
   return (
     <StyledWrapper>
       
@@ -147,7 +136,7 @@ const Profile = () => {
         tab === 'posts' && (
           <StyledPosts
             list={posts}
-            isFetching={isFetchingPosts}
+            isFetching={false}
             onLoadMoreBtnClick={handlers.loadMorePostsBtnClick}
           />
         )

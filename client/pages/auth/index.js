@@ -34,8 +34,8 @@ const Auth = () => {
       password: ''
     },
     validationSchema: yup.object({
-      username: yup.string().required('required').min(3, 'Min 3').max(15, 'Max 15'),
-      password: yup.string().required('required').min(3, 'Min 3').max(15, 'Max 15')
+      username: yup.string().required('required').min(3, 'min 3').max(15, 'max  15'),
+      password: yup.string().required('required').min(3, 'min 3').max(15, 'max 15')
     }),
     async onSubmit({ username, password }) {
       try {
@@ -95,11 +95,15 @@ const Auth = () => {
         {
           tab === 'login' ? (
             <StyledLinkWrapper>
-              Don't have an account? <Link href={'/auth?tab=register'}>Register</Link>
+              Don't have an account? <Link href={'/auth?tab=register'} passHref>
+                <StyledLink>Register</StyledLink>
+              </Link>
             </StyledLinkWrapper>
           ) : (
-            <StyledLinkWrapper href={'/auth?tab=login'}>
-              Already have an account? <Link href={'/auth?tab=login'}>Login</Link>
+            <StyledLinkWrapper>
+              Already have an account? <Link href={'/auth?tab=login'} passHref>
+                <StyledLink>Login</StyledLink>
+              </Link>
             </StyledLinkWrapper>
           )
         }
@@ -136,9 +140,8 @@ const StyledLinkWrapper = styled.div`
   text-align: center;
 `
 
-const StyledErrorMessage = styled.div`
-  color: red;
-  font-size: 13px;
+const StyledLink = styled.a`
+  color: blue;
 `
 
 export default Auth

@@ -3,26 +3,25 @@ const collections = require('../../../db/collections')
 const errorTypes = require('../../../utils/errorTypes')
 const RequestError = require('../../../utils/RequestError')
 
-const getCommentsController = async (req, res, next) => {
+const updateCommentController = async (req, res, next) => {
   try {
-    const params = req.params
-    const postId = new ObjectId(params.postId)
-    const offset = req.query.offset || 0
+    console.log('log')
     const currentUser = req.user
+    const commentId = new ObjectId(req.params._id)
+    const text = req.body.text
 
-    const post = await collections.posts.findOne({ _id: postId })
-
+  
     // throw new RequestError(400, errorTypes.COMMENTS_FORBIDDEN_TO_EDIT_COMMENT)
 
-    if (!post) {
-      throw new RequestError(404, errorTypes.POSTS_POST_NOT_FOUND)
+    if (!await collections.comments.findOne({ creatorId: currentUser._id })) {
+      throw new RequestError(400, errorTypes.COMMENTS_FORBIDDEN_TO_EDIT_COMMENT)
     }
 
-    const foundComments = await collections.comments.aggregate([
+    await collections.comments.updateOne({ _id: commentId }, { $set: { text } })
+
+    const [comment] = await collections.comments.aggregate([
       {
-        $match: {
-          _id: { $in: post.comments }
-        }
+        $match: { _id: commentId }
       },
       {
         $lookup: {
@@ -39,21 +38,18 @@ const getCommentsController = async (req, res, next) => {
         }
       },
       {
-        $skip: offset
-      },
-      {
-        $limit: 5
+        $limit: 1
       },
       {
         $unset: ['creators', 'creatorId', 'creator.password', 'creator.followings']
       }
     ]).toArray()
 
-    return res.status(200).json({ comments: foundComments })
+    return res.status(200).json({ comment })
   } catch (e) {
     return next(e)
   }
 }
 
-module.exports = getCommentsController
+module.exports = updateCommentController
 

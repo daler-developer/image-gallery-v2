@@ -1,20 +1,62 @@
 import pt from 'prop-types'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import styled from 'styled-components'
+import { useFormik } from 'formik'
+import styled, { css } from 'styled-components'
 import Avatar from './Avatar'
 import IconButton from './IconButton'
 import Popup from './Popup'
 import * as api from '../../utils/api'
 import { selectIdOfPostViewingComments } from '../../redux/reducers/uiReducer'
 import { postsActions } from '../../redux/reducers/postsReducer'
+import * as yup from 'yup'
+import Input from './Input'
+import useOnClickOutside from '../../hooks/useOnClickOutside'
 
-const Comment = ({ comment, onCommentDeleted }) => {
+const Comment = ({ comment, onCommentDeleted, onUpdatedComment }) => {
+  const [isEditFormHidden, setIsEditFormHidden] = useState(true)
   const [isPopupHidden, setIsPopupHidden] = useState(true)
 
   const dispatch = useDispatch()
 
+  const editFormRef = useRef(null)
+  const textInputRef = useRef(null)
+
   const idOfPostViewingComments = useSelector((state) => selectIdOfPostViewingComments(state))
+
+  useOnClickOutside(editFormRef, () => {
+    if (!isEditFormHidden) {
+      setIsEditFormHidden(true)
+    }
+  })
+
+  const editForm = useFormik({
+    initialValues: {
+      text: ''
+    },
+    validationSchema: yup.object({
+      text: yup.string().trim().required('required').min(1, 'min 1').max(20, 'max 20')
+    }),
+    async onSubmit(v) {
+      try {
+        const { comment: newComment } = await dispatch(postsActions.commentUpdated({ commentId: comment._id, text: v.text })).unwrap()
+
+        if (onUpdatedComment) {
+          onUpdatedComment(newComment._id, newComment)
+        }
+      } finally {
+        editForm.resetForm()
+        setIsEditFormHidden(true)
+      }
+    }
+  })
+
+  useEffect(() => {
+    if (!isEditFormHidden) {
+      editForm.setValues({ text: comment.text })
+      textInputRef.current?.focus()
+    }
+  }, [isEditFormHidden])
 
   const handlers = {
     async deleteCommentBtnClick() {
@@ -23,9 +65,11 @@ const Comment = ({ comment, onCommentDeleted }) => {
       if (onCommentDeleted) {
         onCommentDeleted(comment._id)
       }
+      setIsPopupHidden(true)
     },
     editCommentBtnClick() {
-
+      setIsEditFormHidden(false)
+      setIsPopupHidden(true)
     },
     openPopupBtnClick() {
       if (isPopupHidden) {
@@ -35,7 +79,7 @@ const Comment = ({ comment, onCommentDeleted }) => {
   }
 
   return (
-    <StyledWrapper>
+    <StyledWrapper $withEditForm={!isEditFormHidden}>
       
       <StyledAvatar src={comment.creator.avatarUrl} />
 
@@ -43,9 +87,25 @@ const Comment = ({ comment, onCommentDeleted }) => {
         {comment.creator.username}
       </StyledUsername>
 
-      <StyledText>
-        {comment.text}
-      </StyledText>
+      {
+        isEditFormHidden ? (
+          <StyledText>
+            {comment.text}
+          </StyledText>
+        ) : (
+          <StyledEditForm ref={editFormRef} onSubmit={editForm.handleSubmit}>
+            <StyledEditInput
+              ref={textInputRef}
+              size='sm'
+              error={editForm.touched.text && editForm.errors.text}
+              inputProps={{
+                placeholder: 'Edit',
+                ...editForm.getFieldProps('text')
+              }}
+            />
+          </StyledEditForm>
+        )
+      }
 
       {
         comment.isCreatedByCurrentUser && (
@@ -71,7 +131,8 @@ const Comment = ({ comment, onCommentDeleted }) => {
 
 Comment.propTypes = {
   comment: pt.object.isRequired,
-  onCommentDeleted: pt.func
+  onCommentDeleted: pt.func,
+  onUpdatedComment: pt.func
 }
 
 const StyledWrapper = styled.li`
@@ -85,6 +146,12 @@ const StyledWrapper = styled.li`
   column-gap: 10px;
   padding-bottom: 10px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+
+  ${({ $withEditForm }) => $withEditForm && css`
+    grid-template-areas:
+      'avatar username  options-btn'
+      'avatar edit-form options-btn';
+  `}
 `
 
 const StyledAvatar = styled(Avatar)`
@@ -103,6 +170,16 @@ const StyledText = styled.span`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+`
+
+const StyledEditForm = styled.form`
+  grid-area: edit-form;
+  align-self: start;
+  display: flex;
+`
+
+const StyledEditInput = styled(Input)`
+  width: 100%;
 `
 
 const StyledPopupWrapper = styled.div`

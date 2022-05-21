@@ -5,7 +5,7 @@ import Post from './Post'
 import Spinner from './Spinner'
 import ErrorMessage from './ErrorMessage'
 
-const Posts = ({ list, isFetching, errorType = null, onLoadMoreBtnClick, ...rest }) => {
+const Posts = ({ list, isFetching, errorType = null, postProps = {}, onLoadMoreBtnClick, ...rest }) => {
   return (
     <StyledWrapper {...rest}>
 
@@ -18,7 +18,7 @@ const Posts = ({ list, isFetching, errorType = null, onLoadMoreBtnClick, ...rest
           <StyledList>
             {
               list.map((post) => (
-                <Post key={post._id} post={post} />
+                <Post {...postProps} key={post._id} post={post} />
               ))
             }
           </StyledList>
@@ -44,7 +44,8 @@ Posts.propTypes = {
   list: pt.array.isRequired,
   isFetching: pt.bool.isRequired,
   errorType: pt.bool,
-  onLoadMoreBtnClick: pt.func.isRequired
+  onLoadMoreBtnClick: pt.func.isRequired,
+  postProps: pt.object
 }
 
 const StyledWrapper = styled.ul`
