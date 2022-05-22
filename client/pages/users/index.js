@@ -5,7 +5,7 @@ import Layout from '../../components/common/Layout'
 import Spinner from '../../components/common/Spinner'
 import ErrorMessage from '../../components/common/ErrorMessage'
 import UserCard from '../../components/common/UserCard'
-import { selectUsers, selectUsersErrorType, selectUsersFetchingStatus, usersActions } from '../../redux/reducers/usersReducer'
+import { selectFeedUsers, usersActions } from '../../redux/reducers/usersReducer'
 import Button from '../../components/common/Button'
 import IconButton from '../../components/common/IconButton'
 import SearchInput from '../../components/common/SearchInput'
@@ -14,9 +14,7 @@ import UserCards from '../../components/common/UserCards'
 const Users = ({}) => {
   const [searchInputValue, setSearchInputValue] = useState('')
 
-  const users = useSelector((state) => selectUsers(state))
-  const status = useSelector((state) => selectUsersFetchingStatus(state))
-  const errorType = useSelector((state) => selectUsersErrorType(state))
+  const { list: users, isFetching, errorType } = useSelector((state) => selectFeedUsers(state))
 
   const filteredUsers = useMemo(() => {
     return users.filter((user) => user.username.includes(searchInputValue))
@@ -25,7 +23,7 @@ const Users = ({}) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    if (status === 'idle') {
+    if (users.length === 0) {
       dispatch(usersActions.fetchedUsers())
     }
   }, [])
@@ -49,7 +47,7 @@ const Users = ({}) => {
 
       <StyledUserCards
         list={filteredUsers}
-        isFetching={status === 'fetching'}
+        isFetching={isFetching}
         onLoadMoreBtnClick={handlers.loadMoreBtnClick}
       />
 

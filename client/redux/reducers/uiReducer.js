@@ -6,9 +6,8 @@ import generateErrorMessage from '../../utils/generateErrorMessage'
 const initialState = {
   activeModal: null,
   idOfPostViewingComments: null,
-  snackbarMessages: []
-    // { type: 'success', text: 'Hello' },
-    // { type: 'success', text: 'Hello' },
+  snackbarMessages: [
+  ]
 }
 
 const uiSlice = createSlice({

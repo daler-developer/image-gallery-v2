@@ -30,7 +30,7 @@ Icon.propTypes = {
 }
 
 const StyledWrapper = styled.span`
-  
+  font-size: inherit
 `
 
 export default Icon

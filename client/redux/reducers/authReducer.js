@@ -39,8 +39,6 @@ const profileUpdated = createAsyncThunk('auth/profile-updated', async (fields, t
   try {
     const form = new FormData()
 
-    console.log(fields)
-
     if (fields.username) {
       form.append('username', fields.username)
     }
@@ -62,15 +60,15 @@ const profileUpdated = createAsyncThunk('auth/profile-updated', async (fields, t
 
 const initialState = {
   currentUser: null,
-  isLoadingCurrentUser: false
+  isFetchingCurrentUser: true
 }
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setCurrentUser(state, { payload }) {
-      state.currentUser = payload
+    changeIsFetchingCurrentUserStatus(state, { payload }) {
+      state.isFetchingCurrentUser = payload
     }
   },
   extraReducers: (builder) => {
@@ -85,11 +83,10 @@ const authSlice = createSlice({
       })
 
       .addCase(fetchedCurrentUser.pending, (state, { payload }) => {
-        state.isLoadingCurrentUser = true
         state.currentUser = null
       })
       .addCase(fetchedCurrentUser.fulfilled, (state, { payload }) => {
-        state.isLoadingCurrentUser = false
+        state.isFetchingCurrentUser = false
         state.currentUser = payload.user
       })
 
@@ -103,8 +100,8 @@ export const selectCurrentUser = (state) => {
   return state.auth.currentUser
 }
 
-export const selectIsLoadingCurrentUser = (state) => {
-  return state.auth.isLoadingCurrentUser
+export const selectIsFetchingCurrentUser = (state) => {
+  return state.auth.isFetchingCurrentUser
 }
 
 export const authActions = {

@@ -1,5 +1,5 @@
 import pt from 'prop-types'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { useMemo } from 'react'
 import Spinner from './Spinner'
 
@@ -40,42 +40,51 @@ const StyledWrapper = styled.button`
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  font-weight: 500;
 
-  &:hover {
-    opacity: 0.8;
-  }
-
-  ${({ $size }) => $size === 'sm' && `
+  ${({ $size }) => $size === 'sm' && css`
     height: 30px;
-    padding: 3px 3px;
-    font-size: 14px;
+    padding: 3px 6px;
+    font-size: 12px;
   `}
-  ${({ $size }) => $size === 'md' && `
+  ${({ $size }) => $size === 'md' && css`
     height: 40px;
     padding: 5px 7px;
     font-size: 15px;
   `}
-  ${({ $size }) => $size === 'lg' && `
+  ${({ $size }) => $size === 'lg' && css`
     height: 40px;
     padding: 7px 10px;
     font-size: 18px;
   `}
 
-  ${({ $color }) => $color === 'blue' && `
-    background-color: #0095f6;
+  ${({ $color }) => $color === 'blue' && css`
+    background-color: rgb(29, 161, 242);
     color: white;
+
+    &:hover {
+      background-color: rgb(0, 109, 191);
+    }
   `}
-  ${({ $color }) => $color === 'grey' && `
-    background-color: #ced4da;
+  ${({ $color }) => $color === 'grey' && css`
+    background-color: rgba(0, 0, 0, 0.1);
     color: black;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.3);
+    }
   `}
-  ${({ $color }) => $color === 'red' && `
-    background-color: red;
+  ${({ $color }) => $color === 'red' && css`
+    background-color: #ff4d4f;
     color: white;
+
+    &:hover {
+      background-color: #d32a2b;
+    }
   `}
 
-  ${({ $roundedBorder }) => $roundedBorder && `
-    border-radius: 3px;
+  ${({ $roundedBorder }) => $roundedBorder && css`
+    border-radius: 6px;
   `}
 `
 

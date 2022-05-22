@@ -34,7 +34,7 @@ const Auth = () => {
       password: ''
     },
     validationSchema: yup.object({
-      username: yup.string().required('required').min(3, 'min 3').max(15, 'max  15'),
+      username: yup.string().required('required').min(3, 'min 3').max(15, 'max 15'),
       password: yup.string().required('required').min(3, 'min 3').max(15, 'max 15')
     }),
     async onSubmit({ username, password }) {
@@ -56,6 +56,15 @@ const Auth = () => {
     <StyledWrapper>
       <StyledForm onSubmit={form.handleSubmit}>
 
+        <StyledTitle>
+          {
+            tab === 'login' && 'Login'
+          }
+          {
+            tab === 'register' && 'Register'
+          }
+        </StyledTitle>
+
         <Input
           size='md'
           error={form.touched.username && form.errors.username}
@@ -69,6 +78,7 @@ const Auth = () => {
           size='md'
           error={form.touched.password && form.errors.password}
           inputProps={{
+            type: 'password',
             placeholder:'Password',
             ...form.getFieldProps('password')
           }}
@@ -125,10 +135,14 @@ const StyledForm = styled.form`
   max-width: 400px;
   width: 100%;
   border-radius: 3px;
-  border: 1px solid black;
   display: flex;
   flex-direction: column;
   row-gap: 10px;
+`
+
+const StyledTitle = styled.h1`
+  font-size: 30px;
+  text-align: center;
 `
 
 const StyledSubmitBtn = styled(Button)`
@@ -141,7 +155,7 @@ const StyledLinkWrapper = styled.div`
 `
 
 const StyledLink = styled.a`
-  color: blue;
+  color: rgb(29, 161, 242);
 `
 
 export default Auth

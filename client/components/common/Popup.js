@@ -33,18 +33,19 @@ Popup.propTypes = {
 }
 
 const StyledWrapper = styled.div`
-  padding: 2px;
   border-radius: 3px;
-  border: 1px solid grey;
   background-color: white;
-  box-shadow: 0 0 5px black;
   z-index: 100;
+  box-shadow: 0 0 10px rgb(0 0 0 / 30%);
+  border: 1px solid rgba(0,0,0,.3);
   display: flex;
   flex-direction: column;
 `
 
 const StyledBtn = styled.button`
   flex: 0 0 30px;
+  font-size: 14px;
+  font-weight: 500;
   padding: 3px 10px;
   text-align: start;
   background-color: transparent;

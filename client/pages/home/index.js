@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { useDispatch, useSelector } from 'react-redux'
 import Layout from '../../components/common/Layout'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { postsActions, selectFeedPosts, } from '../../redux/reducers/postsReducer'
 import Posts from '../../components/common/Posts'
 import SearchInput from '../../components/common/SearchInput'
@@ -10,13 +10,15 @@ import useDebounce from '../../hooks/useDebounce'
 const Home = () => {
   const [searchInputValue, setSearchInputValue] = useState('')
 
-  const debounceValue = useDebounce(searchInputValue, 2000)
-
   const dispatch = useDispatch()
 
   const imageInputRef = useRef(null)
 
   const { list: posts, errorType, isFetching } = useSelector((state) => selectFeedPosts(state))
+
+  const filteredPosts = useMemo(() => {
+    return posts.filter((post) => post.text.toLowerCase().includes(searchInputValue.toLowerCase()))
+  }, [posts, searchInputValue])
 
   useEffect(() => {
     if (!posts.length) {
@@ -45,7 +47,7 @@ const Home = () => {
       />
 
       <StyledPosts
-        list={posts} 
+        list={filteredPosts} 
         isFetching={isFetching}
         errorType={errorType} 
         onLoadMoreBtnClick={handlers.loadMoreBtnClick} 

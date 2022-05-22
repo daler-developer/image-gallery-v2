@@ -4,10 +4,12 @@ import styled, { css } from 'styled-components'
 
 const Input = forwardRef(({ size = 'md', error, inputProps = {}, ...rest }, ref) => {
   return (
-    <StyledWrapper $size={size} $error={error} {...rest}>
+    <StyledWrapper {...rest}>
 
       <StyledInput
         ref={ref}
+        $size={size}
+        $error={error}
         {...inputProps}
       />
 
@@ -31,6 +33,21 @@ Input.propTypes = {
 
 const StyledWrapper = styled.div`
   position: relative;
+`
+
+const StyledInput = styled.input`
+  width: 100%;
+  height: 100%;
+  text-indent: 8px;
+  border: 1px solid #d9d9d9;
+  
+  &:focus {
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, .2);
+  }
+  
+  &:hover {
+    border-color: #40a9ff;
+  }
 
   ${({ $size }) => $size === 'sm' && css`
     height: 30px;
@@ -40,15 +57,12 @@ const StyledWrapper = styled.div`
   `}
 
   ${({ $error }) => $error && css`
-    border: 1px solid red;
-  `}
-`
+    border-color: #ff4d4f !important;
 
-const StyledInput = styled.input`
-  width: 100%;
-  height: 100%;
-  text-indent: 8px;
-  background-color: rgba(0, 0, 0, .05);
+    &:focus {
+      box-shadow: 0 0 0 2px rgba(255, 77, 79, .2) !important;
+    }
+  `}
 `
 
 const StyledErrorMessage = styled.div`
@@ -58,9 +72,9 @@ const StyledErrorMessage = styled.div`
   left: 0;
   right: 0;
   padding: 3px;
-  background-color: red;
+  background-color: rgba(255, 77, 79, 1);
   color: white;
-  border-radius: 3px;
+  border-radius: 0 0 3px 3px;
   z-index: 100;
 `
 

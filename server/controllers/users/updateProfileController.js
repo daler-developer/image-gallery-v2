@@ -11,7 +11,7 @@ const updateProfileController = async (req, res, next) => {
     const { username, password, removeAvatar } = req.body
     const avatarFile = req.file
 
-    if (currentUser._id.equals(userId)) {
+    if (!currentUser._id.equals(userId)) {
       throw new RequestError(400, errorTypes.AUTH_PERMISSION_DENIED)
     }
 
@@ -20,7 +20,7 @@ const updateProfileController = async (req, res, next) => {
     if (username) {
       const userWithSameUsername = await collections.users.findOne({ username })
 
-      if (userWithSameUsername) {
+      if (userWithSameUsername && !userWithSameUsername._id.equals(userId)) {
         throw new RequestError(400, errorTypes.USERS_USER_WITH_SAME_USERNAME_EXISTS)
       }
 
@@ -39,7 +39,16 @@ const updateProfileController = async (req, res, next) => {
 
     await collections.users.updateOne({ _id: userId }, { $set: updatedFields })
 
-    const user = await collections.users.findOne({ _id: userId })
+    const [user] = await collections.users.aggregate([
+      {
+        $match: {
+          _id: userId
+        }
+      },
+      {
+        $unset: ['followings', 'password']
+      }
+    ]).toArray()
  
     return res.json({ user })
   } catch (e) {

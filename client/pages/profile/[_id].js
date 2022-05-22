@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import axios from 'axios'
 import Layout from '../../components/common/Layout'
 import { useEffect, useState } from 'react'
@@ -12,30 +12,22 @@ import Link from 'next/link'
 import UserCards from '../../components/common/UserCards'
 import { postsActions, selectProfilePosts } from '../../redux/reducers/postsReducer'
 import { useDispatch, useSelector } from 'react-redux'
+import Button from '../../components/common/Button'
+import { uiActions } from '../../redux/reducers/uiReducer'
+import { selectProfileFollowers, selectProfileFollowings, selectProfileUser, usersActions } from '../../redux/reducers/usersReducer'
 
 const Profile = () => {
-  const [user, setUser] = useState(null)
-  const [isFetching, setIsFetching] = useState(true)
-
-  const [followers, setFollowers] = useState({
-    list: [],
-    isFetching: false,
-    errorType: null
-  })
-
-  const [followings, setFollowings] = useState({
-    list: [],
-    isFetching: false,
-    errorType: null
-  })
-
   const dispatch = useDispatch()
 
+  const { data: user, isFetching: isFetchingUser, errorType: userErrorType } = useSelector((state) => selectProfileUser(state))
+
   const { list: posts, errorType: postsErrorType, isFetching: isFetchingPosts } = useSelector((state) => selectProfilePosts(state))
+  const { list: followers, errorType: followersErrorType, isFetching: isFetchingFollowers } = useSelector((state) => selectProfileFollowers(state))
+  const { list: followings, errorType: followingsErrorType, isFetching: isFetchingFollowings } = useSelector((state) => selectProfileFollowings(state))
 
   const router = useRouter()
 
-  const tab = router.query.tab
+  const tab = ['posts', 'followers', 'followings'].includes(router.query.tab) ? router.query.tab : 'posts'
 
   useEffect(() => {
     const { tab, _id } = router.query
@@ -46,21 +38,18 @@ const Profile = () => {
   }, [])
 
   useEffect(() => {
-    if (posts.length === 0) {
-      loadPosts()
-    }
     loadUser()
+    loadPosts()
     loadFollowers()
     loadFollowings()
+
+    return () => {
+      dispatch(usersActions.resetProfile())
+    }
   }, [])
 
   const loadUser = async () => {
-    setIsFetching(true)
-
-    const { data } = await api.getUser({ _id: router.query._id })
-
-    setUser(data.user)
-    setIsFetching(false)
+    dispatch(usersActions.fetchedProfileUser({ userId: router.query._id }))
   }
 
   const loadPosts = async () => {
@@ -68,17 +57,11 @@ const Profile = () => {
   }
 
   const loadFollowers = async () => {
-    setFollowers({ ...followers, isFetching: true })
-    const { data } = await api.getFollowers({ userId: router.query._id, offset: followers.list.length })
-
-    setFollowers({ ...followers, isFetching: false, list: [...followers.list, ...data.followers] })
+    dispatch(usersActions.fetchedProfileFollowers({ userId: router.query._id, offset: followers.length }))
   }
   
   const loadFollowings = async () => {
-    setFollowings({ ...followings, isFetching: true })
-    const { data } = await api.getFollowings({ userId: router.query._id, offset: followings.list.length })
-  
-    setFollowings({ ...followings, isFetching: false, list: [...followings.list, ...data.followings] })
+    dispatch(usersActions.fetchedProfileFollowings({ userId: router.query._id, offset: followings.length }))
   }
 
   const handlers = {
@@ -90,6 +73,9 @@ const Profile = () => {
     },
     loadMoreFollowingsBtnClick() {
       loadFollowings()
+    },
+    updateProfileBtnClick() {
+      dispatch(uiActions.changedActiveModal('update-profile'))
     }
   }
   
@@ -97,35 +83,62 @@ const Profile = () => {
     <StyledWrapper>
       
       {
-        isFetching ? (
+        isFetchingUser || !user ? (
           <Spinner />
         ) : <>
-          <StyledBasicInfo>
+          <StyledBody>
             <StyledAvatar />
-            <StyledUsername>@{user.username}</StyledUsername>
-            <StyledNumFollowings>{user.numFollowings}</StyledNumFollowings>
-            <StyledNumFollowers>{user.numFollowers}</StyledNumFollowers>
-            <StyledNumPosts>{user.numPosts}</StyledNumPosts>
-          </StyledBasicInfo>
+            <StyledBasicInfo>
+
+              <StyledUsername>
+                {user.username}
+              </StyledUsername>
+
+              <StyledStatistics>
+
+                <StyledStatisticsItem>
+                  <StyledStatisticsNum>{user.numPosts}</StyledStatisticsNum> posts
+                </StyledStatisticsItem>
+
+                <StyledStatisticsItem>
+                  <StyledStatisticsNum>{user.numFollowers}</StyledStatisticsNum> followers
+                </StyledStatisticsItem>
+
+                <StyledStatisticsItem>
+                  <StyledStatisticsNum>{user.numFollowings}</StyledStatisticsNum> followings
+                </StyledStatisticsItem>
+
+              </StyledStatistics>
+
+              {
+                user.isCurrentUser && (
+                  <StyledUpdateProfileBtn color='grey' size='sm' onClick={handlers.updateProfileBtnClick}>
+                    update profile
+                  </StyledUpdateProfileBtn>
+                )
+              }
+
+            </StyledBasicInfo>
+          </StyledBody>
         </>
       }
 
       <StyledTabs>
 
         <Link href={`/profile/${router.query._id}?tab=posts`} passHref>
-          <StyledTab>
+          <StyledTab $isActive={tab === 'posts'}>
             Posts
           </StyledTab>
         </Link>
 
         <Link href={`/profile/${router.query._id}?tab=followers`} passHref>
-          <StyledTab>
+          <StyledTab $isActive={tab === 'followers'}>
             Followers
           </StyledTab>
         </Link>
 
         <Link href={`/profile/${router.query._id}?tab=followings`} passHref>
-          <StyledTab>
+          <StyledTab $isActive={tab === 'followings'}>
             Followings
           </StyledTab>
         </Link>
@@ -136,7 +149,7 @@ const Profile = () => {
         tab === 'posts' && (
           <StyledPosts
             list={posts}
-            isFetching={false}
+            isFetching={isFetchingPosts}
             onLoadMoreBtnClick={handlers.loadMorePostsBtnClick}
           />
         )
@@ -144,9 +157,9 @@ const Profile = () => {
 
       {
         tab === 'followers' && (
-          <UserCards
-            list={followers.list}
-            isFetching={followers.isFetching}
+          <StyledFollowers
+            list={followers}
+            isFetching={isFetchingFollowers}
             onLoadMoreBtnClick={handlers.loadMoreFollowersBtnClick}
           />
           )
@@ -154,9 +167,9 @@ const Profile = () => {
 
       {
         tab === 'followings' && (
-          <UserCards
-            list={followings.list}
-            isFetching={followings.isFetching}
+          <StyledFollowings
+            list={followings}
+            isFetching={isFetchingFollowings}
             onLoadMoreBtnClick={handlers.loadMoreFollowingsBtnClick}
           />
         )
@@ -175,51 +188,58 @@ Profile.getLayout = (page) => {
 }
 
 const StyledWrapper = styled.div`
-  
+  padding-top: 20px;
 `
 
-const StyledBasicInfo = styled.div`
-  padding-top: 20px;
-  display: grid;
-  grid-template-areas:
-    'avatar username      username     username'
-    'avatar numFollowings numFollowers numPosts';
-  grid-template-columns: 200px 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  row-gap: 20px;
-  column-gap: 20px;
+const StyledBody = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  column-gap: 100px;
 `
 
 const StyledAvatar = styled(Avatar)`
   grid-area: avatar;
-  width: 100%;
+  width: auto;
+  flex: 0 0 180px;
+`
+
+const StyledBasicInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  row-gap: 10px;
+`
+
+const StyledStatistics = styled.ul`
+  display: flex;
+  column-gap: 20px;
+`
+
+const StyledStatisticsItem = styled.li`
+  display: flex;
+  align-items: center;
+  column-gap: 6px;
+`
+
+const StyledStatisticsNum = styled.span`
+  font-weight: 600;
+  font-size: 18px;
 `
 
 const StyledUsername = styled.span`
-  grid-area: username;
-  align-self: end;
-  font-weight: 600;
   font-size: 30px;
 `
 
-const StyledNumFollowings = styled.span`
-  grid-area: numFollowings;
-  font-size: 20px;
-`
-
-const StyledNumFollowers = styled.span`
-  grid-area: numFollowers;
-`
-
-const StyledNumPosts = styled.span`
-  grid-area: numPosts;
+const StyledUpdateProfileBtn = styled(Button)`
+  
 `
 
 const StyledTabs = styled.ul`
   margin-top: 20px;
   display: flex;
   height: 50px;
-`
+  `
 
 const StyledTab = styled.li`
   flex: 1 0 33%;
@@ -227,19 +247,27 @@ const StyledTab = styled.li`
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  color: rgb(103, 117, 127);
+  font-weight: 500;
+  border-bottom: 2px solid rgb(103, 117, 127);
+
+  ${({ $isActive }) => $isActive && css`
+    border-bottom-color: rgb(41, 163, 239);
+    color: rgb(41, 163, 239);
+  `}
 `
 
 const StyledPosts = styled(Posts)`
-  margin: 50px auto 0;
+  margin: 20px auto 0;
   max-width: 500px;
 `
 
-const StyledFollowers = styled.div`
-  
+const StyledFollowers = styled(UserCards)`
+  margin-top: 20px;
 `
 
-const StyledFollowings = styled.div`
-  
+const StyledFollowings = styled(UserCards)`
+  margin-top: 20px;
 `
 
 export default Profile

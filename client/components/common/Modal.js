@@ -62,14 +62,14 @@ const StyledWrapper = styled.div`
   width: 100%;
   height: 100%;
   z-index: 1000;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgba(0,0,0,.43);
   display: flex;
   align-items: center;
   justify-content: center;
 `
 
 const StyledModal = styled.div`
-  border-radius: 4px;
+  border-radius: 8px 8px 0 0;
   background-color: white;
   max-width: 400px;
   width: 100%;
@@ -77,14 +77,13 @@ const StyledModal = styled.div`
 
 const StyledHeader = styled.div`
   padding: 10px;
-  border-bottom: 2px solid black;
   display: flex;
   align-items: center;
   justify-content: space-between;
 `
 
 const StyledTitle = styled.span`
-  font-weight: 600;
+  font-weight: 500;
   font-size: 18px;
 `
 

@@ -10,11 +10,6 @@ const getCurrentUserController = async (req, res, next) => {
         $match: { _id: currentUser._id }
       },
       {
-        $set: {
-          numFollowings: { $size: '$followings' },
-        }
-      },
-      {
         $unset: ['followings', 'password']
       }
     ]).toArray()

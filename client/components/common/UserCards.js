@@ -1,10 +1,11 @@
 import pt from 'prop-types'
 import styled from 'styled-components'
+import ErrorMessage from './ErrorMessage'
 import IconButton from './IconButton'
 import Spinner from './Spinner'
 import UserCard from './UserCard'
 
-const UserCards = ({ list, isFetching, onLoadMoreBtnClick, ...rest }) => {
+const UserCards = ({ list, isFetching, errorType = null, onLoadMoreBtnClick, ...rest }) => {
   return (
     <StyledWrapper {...rest}>
 
@@ -19,9 +20,12 @@ const UserCards = ({ list, isFetching, onLoadMoreBtnClick, ...rest }) => {
       {
         isFetching ? (
           <StyledSpinner size='md' />
-        ) : (
+        ) : <>
+          {
+            errorType && <ErrorMessage type={errorType} />
+          }
           <StyledLoadMoreBtn size='md' onClick={onLoadMoreBtnClick}>add</StyledLoadMoreBtn>
-        )
+        </>
       }
 
     </StyledWrapper>
@@ -31,6 +35,7 @@ const UserCards = ({ list, isFetching, onLoadMoreBtnClick, ...rest }) => {
 UserCards.propTypes = {
   list: pt.arrayOf(pt.object).isRequired,
   isFetching: pt.bool.isRequired,
+  errorType: pt.string,
   onLoadMoreBtnClick: pt.func.isRequired
 }
 

@@ -29,7 +29,7 @@ const AddPostModal = ({}) => {
       text: ''
     },
     validationSchema: yup.object({
-      text: yup.string().trim().required().min(1).max(100)
+      text: yup.string().trim().required('required').min(1, 'min 1').max(100, 'max 100')
     }),
     async onSubmit(v) {
       try {

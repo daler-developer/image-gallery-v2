@@ -1,18 +1,23 @@
 import styled from 'styled-components'
 import Modal from './common/Modal'
+import * as yup from 'yup'
 import { useFormik } from 'formik'
 import Input from './common/Input'
 import Button from './common/Button'
 import Avatar from './common/Avatar'
 import useCurrentUser from '../hooks/useCurrentUser'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { authActions } from '../redux/reducers/authReducer'
-import { selectActiveModal } from '../redux/reducers/uiReducer'
+import { selectActiveModal, uiActions } from '../redux/reducers/uiReducer'
+import ErrorMessage from '../components/common/ErrorMessage'
 
 const UpdateProfileModal = ({}) => {
   const [avatar, setAvatar] = useState(null)
   const [isRemoveAvatarSelected, setIsRemoveAvatarSelected] = useState(false)
+  const [errorType, setErrorType] = useState(null)
+
+  const avatarUrl = useMemo(() => avatar ? URL.createObjectURL(avatar) : null, avatar)
 
   const isHidden = useSelector((state) => selectActiveModal(state)) !== 'update-profile'
 
@@ -26,26 +31,48 @@ const UpdateProfileModal = ({}) => {
     initialValues: {
       username: ''
     },
+    validationSchema: yup.object({
+      username: yup.string().trim().required('required').min(3, 'min 3').max(15, 'max 15')
+    }),
     async onSubmit(v) {
-      const fields = {}
+      try {
+        const fields = {}
 
-      if (v.username !== currentUser.username) {
-        fields.username = v.username
-      }
+        if (v.username !== currentUser.username) {
+          fields.username = v.username
+        }
 
-      if (isRemoveAvatarSelected) {
-        fields.removeAvatar = 'yes'
-      } else if (avatar) {
-        fields.avatar = avatar
+        if (isRemoveAvatarSelected) {
+          fields.removeAvatar = 'yes'
+        } else if (avatar) {
+          fields.avatar = avatar
+        }
+        
+        await dispatch(authActions.profileUpdated(fields)).unwrap()
+
+        dispatch(uiActions.changedActiveModal(null))
+      } catch (e) {
+        setErrorType(e.errorType)
+      } finally {
+        resetImage()
       }
-      
-      await dispatch(authActions.profileUpdated(fields))
     }
   })
-
+  
   useEffect(() => {
-    form.setValues({ username: currentUser.username })
-  }, [currentUser])
+    if (isHidden) {
+      resetImage()
+      form.resetForm()
+    } else {
+      form.setValues({ username: currentUser.username })
+    }
+  }, [isHidden])
+
+  const resetImage = () => {
+    setAvatar(null)
+    setIsRemoveAvatarSelected(false)
+    setErrorType(null)
+  }
 
   const handlers = {
     changeAvatarBtnClick() {
@@ -53,6 +80,7 @@ const UpdateProfileModal = ({}) => {
     },
     avatarInputChange(e) {
       setAvatar(e.target.files[0])
+      setIsRemoveAvatarSelected(false)
     },
     removeAvatarBtnClick() {
       setIsRemoveAvatarSelected(true)
@@ -64,6 +92,7 @@ const UpdateProfileModal = ({}) => {
       <StyledForm onSubmit={form.handleSubmit}>
 
         <Input
+          error={form.touched.username && form.errors.username}
           inputProps={{
             placeholder: 'Username',
             ...form.getFieldProps('username')
@@ -72,9 +101,14 @@ const UpdateProfileModal = ({}) => {
 
         <StyledAvatarWrapper>
           {
-            avatar ? (
+            isRemoveAvatarSelected ? (
               <StyledAvatar
-                src={URL.createObjectURL(avatar)}
+                src={null}
+                size='md'
+              />
+            ) : avatar ? (
+              <StyledAvatar
+                src={avatarUrl}
                 size='md'
               />
             ) : (               
@@ -92,6 +126,10 @@ const UpdateProfileModal = ({}) => {
           </StyledChangeAvatarBtn>
         </StyledAvatarWrapper>
 
+        {
+          errorType && <ErrorMessage type={errorType} />
+        }
+
         <StyledSubmitBtn type='submit' size='md' isLoading={form.isSubmitting}>
           Update
         </StyledSubmitBtn>
@@ -107,6 +145,7 @@ const StyledForm = styled.form`
   display: flex;
   flex-direction: column;
   row-gap: 10px;
+  padding: 10px;
 `
 
 const StyledAvatarWrapper = styled.div`

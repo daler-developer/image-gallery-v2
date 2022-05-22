@@ -1,4 +1,4 @@
-import { createGlobalStyle } from "styled-components";
+import { createGlobalStyle } from "styled-components"
 
 const GlobalStyle = createGlobalStyle`  
   * {
@@ -13,12 +13,13 @@ const GlobalStyle = createGlobalStyle`
   body {
     font-size: 16;
     color: black;
-    font-family: sans-serif;
+    font-family: "Poppins";
     background-color: #fafafa;
   }
 
   a {
     text-decoration: none;
+    cursor: pointer;
   }
 
   input {
@@ -34,6 +35,7 @@ const GlobalStyle = createGlobalStyle`
   button {
     cursor: pointer;
     border: none;
+    white-space: nowrap;
   }
 
   img {

@@ -141,7 +141,7 @@ const Post = ({ post }) => {
 
           {
             post.likedByCurrentUser ? (
-              <IconButton size='md' color='light' onClick={handlers.removeLikeBtnClick} disabled={isRemoveLikeBtnDisabled}>
+              <IconButton size='md' color='red' onClick={handlers.removeLikeBtnClick} disabled={isRemoveLikeBtnDisabled}>
                 favorite
               </IconButton>
             ) : (
@@ -186,9 +186,9 @@ const Post = ({ post }) => {
                   isUsersLikedCurrentPostFetching ? (
                     <StyledSpinner size='sm' color='white' />
                   ) : (
-                    <StyledLoadMoreCommentsBtn onClick={handlers.loadMoreBtnClick}>
+                    <StyledLoadMoreUsersWhoLikedCurrentPostBtn onClick={handlers.loadMoreBtnClick}>
                       more
-                    </StyledLoadMoreCommentsBtn>
+                    </StyledLoadMoreUsersWhoLikedCurrentPostBtn>
                   )
                 }
               </StyledUsersPanelLikedCurrentPost>
@@ -211,7 +211,7 @@ const Post = ({ post }) => {
 }
 
 Post.propTypes = {
-  post: pt.object.isRequired,
+  post: pt.object.isRequired
 }
 
 const StyledWrapper = styled.li`
@@ -274,7 +274,7 @@ const StyledBody = styled.div`
 `
 
 const StyledText = styled.p`
-  font-size: 18px;
+  font-size: 14px;
 `
 
 const StyledActions = styled.div`
@@ -285,7 +285,8 @@ const StyledActions = styled.div`
 
 const StyledNumLikes = styled.div`
   margin-top: 5px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
   position: relative;
   align-self: start;
@@ -305,7 +306,7 @@ const StyledUsersPanelLikedCurrentPost = styled.div`
   border-radius: 3px;
   background-color: rgba(0, 0, 0, 0.9);
   color: white;
-  font-size: 13px;
+  font-weight: 400;
   min-width: 150px;
   padding: 5px;
   row-gap: 5px;
@@ -325,9 +326,10 @@ const StyledUsersLikedCurrentPost = styled.ul`
 const StyledUserLikedCurrentPost = styled.li`
   color: white;
   text-align: center;
+  font-weight: 400;
 `
 
-const StyledLoadMoreCommentsBtn = styled.button`
+const StyledLoadMoreUsersWhoLikedCurrentPostBtn = styled.button`
   background-color: transparent;
 
   &:hover {
@@ -341,7 +343,8 @@ const StyledNoLikesInfo = styled.div`
 
 const StyledOpenCommentsBtn = styled.button`
   margin-top: 10px;
-  color: grey;
+  font-size: 13px;
+  color: #8e8e8e;
   background-color: transparent;
   align-self: start;
 

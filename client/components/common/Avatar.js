@@ -3,7 +3,7 @@ import Image from 'next/image'
 import styled from 'styled-components'
 import emptyAvatar from '../../public/empty-avatar.png'
 
-const Avatar = ({ size = 'md', src, ...rest }) => {
+const Avatar = ({ size = 'md', src = null, ...rest }) => {
   return (
     <StyledWrapper
       $size={size}
@@ -16,6 +16,7 @@ const Avatar = ({ size = 'md', src, ...rest }) => {
 
 Avatar.propTypes = {
   size: pt.oneOf(['sm', 'md', 'lg']),
+  src: pt.string
 }
 
 const StyledWrapper = styled.div`
@@ -25,13 +26,13 @@ const StyledWrapper = styled.div`
   overflow: hidden;
 
   ${({ $size }) => $size === 'sm' && `
-    width: 20px;
+    width: 34px;
   `}
   ${({ $size }) => $size === 'md' && `
     width: 40px;
   `}
   ${({ $size }) => $size === 'lg' && `
-    width: 80px;
+    width: 120px;
   `}
 `
 

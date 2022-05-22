@@ -12,11 +12,11 @@ const Snackbar = () => {
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      // dispatch(uiActions.removedAllSnackbarMessages())
+      dispatch(uiActions.removedAllSnackbarMessages())
     }, 2000)
 
     return () => clearTimeout(timeout)
-  }, [messages])
+  }, [messages.length])
 
   const handlers = {
     removeAllBtnClick() {
@@ -56,26 +56,27 @@ const StyledWrapper = styled.div`
 const StyledList = styled.ul`
   display: flex;
   flex-direction: column;
-  row-gap: 4px;  
+  row-gap: 4px;
 `
 
 const StyledMessage = styled.li`
-  display: flex;
-  align-items: center;
   column-gap: 4px;
   padding: 20px;
   background-color: white;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
   border-radius: 3px;
-  text-wrap: nowrap;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 14px;
 
   ${({ $type }) => $type === 'success' && css`
-    border: 1px solid green;
+    background-color: #f6ffed;
+    border: 1px solid #b7eb8f;
   `}
+
   ${({ $type }) => $type === 'error' && css`
-    border: 1px solid red;
+    background-color: #fff2f0;
+    border: 1px solid #ffccc7;
   `}
 `
 

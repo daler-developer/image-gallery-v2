@@ -8,7 +8,7 @@ const getUserController = async (req, res, next) => {
     const userId = new ObjectId(req.params._id)
     const currentUser = req.user
 
-    const numPosts = (await collections.posts.find({ creator: userId }).toArray()).length
+    const numPosts = (await collections.posts.find({ creatorId: userId }).toArray()).length
     const numFollowers = (await collections.users.find({ followings: { $all: [userId] } }).toArray()).length
     
     const users = await collections.users.aggregate([
@@ -22,7 +22,14 @@ const getUserController = async (req, res, next) => {
           numFollowings: { $size: '$followings' },
           numFollowers,
           numPosts,
-          currentUserFollows: { $in: ['$_id', currentUser.followings] }
+          isCurrentUser: { $eq: [currentUser._id, '$_id'] },
+          currentUserFollows: {
+            $cond: {
+              if: { $eq: [currentUser._id, '$_id'] },
+              then: null,
+              else: { $in: ['$_id', currentUser.followings] }
+            }
+          }
         }
       },
       {

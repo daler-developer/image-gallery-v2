@@ -24,7 +24,7 @@ const StyledWrapper = styled.div`
   height: 40px;
   display: flex;
   column-gap: 10px;
-  background-color: rgba(0, 0, 0, 0.06);
+  background-color: #efefef;
   border-radius: 4px;
   padding: 0 10px;
 `
@@ -32,6 +32,7 @@ const StyledWrapper = styled.div`
 const StyledIcon = styled(Icon)`
   align-self: center;
   flex: 0 0 auto;
+  font-size: 24px;
   color: grey;
   background-color: transparent;
 `

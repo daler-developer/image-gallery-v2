@@ -1,5 +1,5 @@
 import pt from 'prop-types'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import Icon from './Icon'
 
 const IconButton = ({ variant = 'outlined', color='light', size = 'md', children, ...rest }) => {
@@ -24,30 +24,32 @@ const StyledWrapper = styled.button`
   align-items: center;
   justify-content: center;
 
-  &:hover {
-    opacity: 0.8;
-  }
-
-  ${({ $size }) => $size === 'sm' && `
-    width: 30px;
+  ${({ $size }) => $size === 'sm' && css`
+    width: 35px;
+    font-size: 20px;
   `}
-  ${({ $size }) => $size === 'md' && `
+  ${({ $size }) => $size === 'md' && css`
     width: 40px;
+    font-size: 25px;
   `}
-  ${({ $size }) => $size === 'lg' && `
+  ${({ $size }) => $size === 'lg' && css`
     width: 50px;
   `}
 
-  ${({ $color }) => $color === 'grey' && `
+  ${({ $color }) => $color === 'grey' && css`
     background-color: #ced4da;
     color: black;
   `}
-  ${({ $color }) => $color === 'red' && `
-    background-color: red;
-    color: white;
+  ${({ $color }) => $color === 'red' && css`
+    background-color: #ff4d4f14;
+    color: #ff4d4f;
+
+    &:hover {
+      background-color: #ff4d4f2e;
+    }
   `}
-  ${({ $color }) => $color === 'light' && `
-    background-color: white;
+  ${({ $color }) => $color === 'light' && css`
+    background-color: transparent;
     color: black;
 
     &:hover {
