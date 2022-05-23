@@ -11,11 +11,16 @@ const USERS_USER_WITH_SAME_USERNAME_EXISTS = 'USERS/USER_WITH_SAME_USERNAME_EXIS
 const USERS_USER_DOES_NOT_EXIST = 'USERS/USER_DOES_NOT_EXIST'
 const USERS_ALREADY_FOLLOWING_USER = 'USERS/ALREADY_FOLLOWING'
 const USERS_NOT_FOLLOWING_USER_YET = 'USERS/NOT_FOLLOWING_YET'
+const USERS_CANNOT_FOLLOW_ONESELF = 'USERS/CANNO_FOLLOW_ONESELF'
+const USERS_CANNOT_UNFOLLOW_ONESELF = 'USERS/CANNOT_UNFOLLOW_ONESELF'
 
 const POSTS_POST_NOT_FOUND = 'POSTS/NOT_FOUND'
 const POSTS_ALREADY_LIKED_POST = 'POSTS/ALREADY_LIKED'
 const POSTS_DID_NOT_LIKE_POST_YET = 'POSTS/DID_NOT_LIKE_YET'
 const POSTS_FORBIDDEN_TO_DELETE_POST = 'POSTS/FORBIDDEN_TO_DELETE'
+
+const COMMENTS_FORBIDDEN_TO_DELETE_COMMENT = 'COMMENTS/FORBIDDEN_TO_DELETE_COMMENT'
+const COMMENTS_FORBIDDEN_TO_EDIT_COMMENT = 'COMMENTS/FORBIDDEN_TO_EDIT_COMMENT'
 
 const errorMessages = {
 
@@ -28,6 +33,8 @@ const errorMessages = {
   [USERS_USER_DOES_NOT_EXIST]: 'This user does not exist',
   [USERS_ALREADY_FOLLOWING_USER]: 'You are already following this user',
   [USERS_NOT_FOLLOWING_USER_YET]: 'You are not yet following this user',
+  [USERS_CANNOT_FOLLOW_ONESELF]: 'You cannot follow oneself',
+  [USERS_CANNOT_UNFOLLOW_ONESELF]: 'You cannot unfollow oneself',
 
   [COMMON_SERVER_ERROR]: 'Server error',
   [COMMON_VALIDATION_ERROR]: 'Invalid data passed to server',
@@ -35,12 +42,14 @@ const errorMessages = {
   [AUTH_INVALID_TOKEN]: 'Invalid token',
   [AUTH_NOT_AUTHENTICATED]: 'Not authenticated',
   [AUTH_PERMISSION_DENIED]: 'Permission denied',
-  [AUTH_INVALID_PASSWORD]: 'Incorrect password'
+  [AUTH_INVALID_PASSWORD]: 'Incorrect password',
+
+  [COMMENTS_FORBIDDEN_TO_DELETE_COMMENT]: 'You are forbidden to delete comment',
+  [COMMENTS_FORBIDDEN_TO_EDIT_COMMENT]: 'You are forbidden to edit comment',
 
 }
 
 const generateErrorMessage = (errorType) => {
-  return 'test error'
   return errorMessages[errorType]
 }
 
