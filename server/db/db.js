@@ -1,5 +1,5 @@
 const client = require("./client")
 
-const db = client.db('image-gallery')
+const db = client.db(process.MONGO_DBNAME)
 
 module.exports = db
