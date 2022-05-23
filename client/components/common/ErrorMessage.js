@@ -15,7 +15,7 @@ ErrorMessage.propTypes = {
   align: pt.string
 }
 
-const StyledWrapper = styled.span`
+const StyledWrapper = styled.p`
   color: #ff4d4f;
 
   ${({ $align }) => $align === 'start' && css`
