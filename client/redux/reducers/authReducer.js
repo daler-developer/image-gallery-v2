@@ -89,6 +89,9 @@ const authSlice = createSlice({
         state.isFetchingCurrentUser = false
         state.currentUser = payload.user
       })
+      .addCase(fetchedCurrentUser.rejected, (state, { payload }) => {
+        state.isFetchingCurrentUser = false
+      })
 
       .addCase(profileUpdated.fulfilled, (state, { payload }) => {
         state.currentUser = payload.user
