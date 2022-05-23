@@ -18,11 +18,19 @@ const UserCards = ({ list, isFetching, errorType = null, onLoadMoreBtnClick, ...
       </StyledList>
 
       {
+        !isFetching && list.length === 0 && (
+          <StyledNoUsersInfo>
+            No users
+          </StyledNoUsersInfo>
+        )
+      }
+
+      {
         isFetching ? (
           <StyledSpinner size='md' />
         ) : <>
           {
-            errorType && <ErrorMessage type={errorType} />
+            errorType && <StyledErrorMessage align='center' type={'POSTS/POST_NOT_FOUND'} />
           }
           <StyledLoadMoreBtn size='md' onClick={onLoadMoreBtnClick}>add</StyledLoadMoreBtn>
         </>
@@ -49,8 +57,17 @@ const StyledList = styled.ul`
   row-gap: 8px;
 `
 
+const StyledNoUsersInfo = styled.div`
+  text-align: center;
+`
+
 const StyledSpinner = styled(Spinner)`
   margin: 20px auto 0;
+`
+
+const StyledErrorMessage = styled(ErrorMessage)`
+  margin: 20px auto 0;
+  display: block;
 `
 
 const StyledLoadMoreBtn = styled(IconButton)`
