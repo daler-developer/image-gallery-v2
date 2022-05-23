@@ -17,8 +17,6 @@ const AppWrapper = ({ children }) => {
   useEffect(() => {
     if (localStorage.getItem('auth-token')) {
       dispatch(authActions.fetchedCurrentUser())
-    } else {
-      dispatch(authActions.changeIsFetchingCurrentUserStatus(false))
     }
   }, [])
 
