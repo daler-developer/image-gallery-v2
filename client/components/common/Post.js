@@ -218,6 +218,7 @@ const StyledWrapper = styled.li`
   position: relative;
   border: 1px solid rgb(219,219,219);
   border-radius: 3px;
+  background-color: white;
 `
 
 const StyledHeader = styled.div`
