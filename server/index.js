@@ -27,7 +27,7 @@ const start = async () => {
   try {
     await client.connect()
   
-    app.listen(Number(process.env.PORT) || 4000, () => console.log('listening'))
+    app.listen(4000, () => console.log('listening on post 4000'))
   } catch (e) {
     console.log('db error', e)
   }
