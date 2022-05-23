@@ -136,7 +136,6 @@ const StyledErrorMessage = styled(ErrorMessage)`
 
 const StyledNoCommentsText = styled.span`
   align-self: center;
-  font-weight: 600;
 `
 
 export default CommentsModal
