@@ -21,7 +21,7 @@ Please install the following software before starting development:
   - Clone [repository](https://github.com/daler-developer/messenger-mern)
   - Run `npm install` in 'server' and 'client' folders
   - Run `npm run dev` in 'server' folder and `npm run dev` in 'client' folder
-  - Set ``JWT_SECRET`, `MONGO_URL`, `MONGO_DBNAME` in 'server/.env.local' file
+  - Set `JWT_SECRET`, `MONGO_URL`, `MONGO_DBNAME` in 'server/.env.local' file
   - Open `https://localhost:3000` in a browser
   
    
