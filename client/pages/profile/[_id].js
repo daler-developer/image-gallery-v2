@@ -46,7 +46,7 @@ const Profile = () => {
     return () => {
       dispatch(usersActions.resetProfile())
     }
-  }, [])
+  }, [router.query._id])
 
   const loadUser = async () => {
     dispatch(usersActions.fetchedProfileUser({ userId: router.query._id }))
@@ -83,35 +83,37 @@ const Profile = () => {
     <StyledWrapper>
       
       {
-        isFetchingUser || !user ? (
+        isFetchingUser ? (
           <StyledSpinner />
+        ) : userErrorType ? (
+          <ErrorMessage align='center' type={userErrorType} />
         ) : <>
           <StyledBody>
-            <StyledAvatar />
+            <StyledAvatar src={user?.avatarUrl} />
             <StyledBasicInfo>
 
               <StyledUsername>
-                {user.username}
+                {user?.username}
               </StyledUsername>
 
               <StyledStatistics>
 
                 <StyledStatisticsItem>
-                  <StyledStatisticsNum>{user.numPosts}</StyledStatisticsNum> posts
+                  <StyledStatisticsNum>{user?.numPosts}</StyledStatisticsNum> posts
                 </StyledStatisticsItem>
 
                 <StyledStatisticsItem>
-                  <StyledStatisticsNum>{user.numFollowers}</StyledStatisticsNum> followers
+                  <StyledStatisticsNum>{user?.numFollowers}</StyledStatisticsNum> followers
                 </StyledStatisticsItem>
 
                 <StyledStatisticsItem>
-                  <StyledStatisticsNum>{user.numFollowings}</StyledStatisticsNum> followings
+                  <StyledStatisticsNum>{user?.numFollowings}</StyledStatisticsNum> followings
                 </StyledStatisticsItem>
 
               </StyledStatistics>
 
               {
-                user.isCurrentUser && (
+                user?.isCurrentUser && (
                   <StyledUpdateProfileBtn color='grey' size='sm' onClick={handlers.updateProfileBtnClick}>
                     update profile
                   </StyledUpdateProfileBtn>
