@@ -206,12 +206,12 @@ const postsSlice = createSlice({
       })
 
       .addCase(postLikeRemoved.fulfilled, (state, { payload }) => {
-        const post = state.feed.list.find((post) => post._id === payload.postId)
+        const feedPost = state.feed.list.find((post) => post._id === payload.postId)
         const profilePost = state.profile.list.find((post) => post._id === payload.postId)
 
-        if (post) {
-          post.numLikes--
-          post.likedByCurrentUser = false
+        if (feedPost) {
+          feedPost.numLikes--
+          feedPost.likedByCurrentUser = false
         }
         if (profilePost) {
           profilePost.numLikes--
@@ -222,6 +222,10 @@ const postsSlice = createSlice({
       .addCase(postDeleted.fulfilled, (state, { payload }) => {
         state.feed.list.splice(
           state.feed.list.findIndex((post) => post._id === payload.postId),
+          1
+        )
+        state.profile.list.splice(
+          state.profile.list.findIndex((post) => post._id === payload.postId),
           1
         )
       })
