@@ -1,5 +1,3 @@
-# NOT COMPLETED YET!
-
 # Messenger(MERN)
 
 Welcome to Social Media app! 👋
