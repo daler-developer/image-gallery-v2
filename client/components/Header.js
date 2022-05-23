@@ -22,6 +22,9 @@ const Header = ({}) => {
   const dispatch = useDispatch()
 
   const handlers = {
+    leftClick(e) {
+      setIsPopupHidden(false)
+    },
     addPostBtnClick() {
       dispatch(uiActions.changedActiveModal('add-post'))
     },
@@ -45,7 +48,7 @@ const Header = ({}) => {
       <Container>
         <StyledBody>
 
-          <StyledLeft onClick={() => setIsPopupHidden(false)}>
+          <StyledLeft onClick={handlers.leftClick}>
             <StyledAvatarWrapper>
               <StyledAvatar
                 src={currentUser.avatarUrl}
@@ -53,6 +56,7 @@ const Header = ({}) => {
               />
               <StyledPopup
                 isHidden={isPopupHidden}
+                onClick={(e) => e.stopPropagation()}
                 onClose={() => setIsPopupHidden(true)}
                 btns={[
                   { text: 'Logout', onClick: handlers.logoutBtnClick },
