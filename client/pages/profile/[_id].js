@@ -84,7 +84,7 @@ const Profile = () => {
       
       {
         isFetchingUser || !user ? (
-          <Spinner />
+          <StyledSpinner />
         ) : <>
           <StyledBody>
             <StyledAvatar />
@@ -120,59 +120,60 @@ const Profile = () => {
 
             </StyledBasicInfo>
           </StyledBody>
+          <StyledTabs>
+
+            <Link href={`/profile/${router.query._id}?tab=posts`} passHref>
+              <StyledTab $isActive={tab === 'posts'}>
+                Posts
+              </StyledTab>
+            </Link>
+
+            <Link href={`/profile/${router.query._id}?tab=followers`} passHref>
+              <StyledTab $isActive={tab === 'followers'}>
+                Followers
+              </StyledTab>
+            </Link>
+
+            <Link href={`/profile/${router.query._id}?tab=followings`} passHref>
+              <StyledTab $isActive={tab === 'followings'}>
+                Followings
+              </StyledTab>
+            </Link>
+
+          </StyledTabs>
+          {
+            tab === 'posts' && (
+              <StyledPosts
+                list={posts}
+                isFetching={isFetchingPosts}
+                errorType={postsErrorType}
+                onLoadMoreBtnClick={handlers.loadMorePostsBtnClick}
+              />
+            )
+          }
+
+          {
+            tab === 'followers' && (
+              <StyledFollowers
+                list={followers}
+                isFetching={isFetchingFollowers}
+                errorType={followersErrorType}
+                onLoadMoreBtnClick={handlers.loadMoreFollowersBtnClick}
+              />
+              )
+            }
+
+          {
+            tab === 'followings' && (
+              <StyledFollowings
+                list={followings}
+                isFetching={isFetchingFollowings}
+                errorType={followingsErrorType}
+                onLoadMoreBtnClick={handlers.loadMoreFollowingsBtnClick}
+              />
+            )
+          }
         </>
-      }
-
-      <StyledTabs>
-
-        <Link href={`/profile/${router.query._id}?tab=posts`} passHref>
-          <StyledTab $isActive={tab === 'posts'}>
-            Posts
-          </StyledTab>
-        </Link>
-
-        <Link href={`/profile/${router.query._id}?tab=followers`} passHref>
-          <StyledTab $isActive={tab === 'followers'}>
-            Followers
-          </StyledTab>
-        </Link>
-
-        <Link href={`/profile/${router.query._id}?tab=followings`} passHref>
-          <StyledTab $isActive={tab === 'followings'}>
-            Followings
-          </StyledTab>
-        </Link>
-
-      </StyledTabs>
-
-      {
-        tab === 'posts' && (
-          <StyledPosts
-            list={posts}
-            isFetching={isFetchingPosts}
-            onLoadMoreBtnClick={handlers.loadMorePostsBtnClick}
-          />
-        )
-      }
-
-      {
-        tab === 'followers' && (
-          <StyledFollowers
-            list={followers}
-            isFetching={isFetchingFollowers}
-            onLoadMoreBtnClick={handlers.loadMoreFollowersBtnClick}
-          />
-          )
-        }
-
-      {
-        tab === 'followings' && (
-          <StyledFollowings
-            list={followings}
-            isFetching={isFetchingFollowings}
-            onLoadMoreBtnClick={handlers.loadMoreFollowingsBtnClick}
-          />
-        )
       }
 
     </StyledWrapper>
@@ -189,6 +190,10 @@ Profile.getLayout = (page) => {
 
 const StyledWrapper = styled.div`
   padding-top: 20px;
+`
+
+const StyledSpinner = styled(Spinner)`
+  margin: 0 auto;
 `
 
 const StyledBody = styled.div`
