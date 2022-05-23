@@ -1,5 +1,5 @@
 const client = require("./client")
 
-const db = client.db(process.MONGO_DBNAME)
+const db = client.db(process.env.MONGO_DBNAME)
 
 module.exports = db
